@@ -27,7 +27,8 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
+ */
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -39,63 +40,53 @@ public class QuoteServerThread extends Thread {
     protected boolean moreQuotes = true;
 
     public QuoteServerThread() throws IOException {
-	this("QuoteServerThread");
+        this("QuoteServerThread");
     }
 
     public QuoteServerThread(String name) throws IOException {
         super(name);
         socket = new DatagramSocket(4445);
-
-        try {
-            in = new BufferedReader(new FileReader("one-liners.txt"));
-        } catch (FileNotFoundException e) {
-            System.err.println("Could not open quote file. Serving time instead.");
-        }
     }
 
     public void run() {
-
-        while (moreQuotes) {
-            try {
-                byte[] buf = new byte[256];
-
-                // receive request
-                DatagramPacket packet = new DatagramPacket(buf, buf.length);
-                socket.receive(packet);
-
-                // figure out response
-                String dString = null;
-                if (in == null)
-                    dString = new Date().toString();
-                else
-                    dString = getNextQuote();
-
-                buf = dString.getBytes();
-
-		// send the response to the client at "address" and "port"
-                InetAddress address = packet.getAddress();
-                int port = packet.getPort();
-                packet = new DatagramPacket(buf, buf.length, address, port);
-                socket.send(packet);
-            } catch (IOException e) {
-                e.printStackTrace();
-		moreQuotes = false;
-            }
+        int i = 0;
+        while (i < 200) {
+            DatagramPacket clientPacket = receiveData();
+            //Get the string from the packet
+            String received = new String(clientPacket.getData(), 0, clientPacket.getLength());
+            System.out.println(received);
+            sendData(received, clientPacket);
+            i++;
         }
         socket.close();
     }
 
-    protected String getNextQuote() {
-        String returnValue = null;
+    private DatagramPacket receiveData() {
         try {
-            if ((returnValue = in.readLine()) == null) {
-                in.close();
-		moreQuotes = false;
-                returnValue = "No more quotes. Goodbye.";
-            }
-        } catch (IOException e) {
-            returnValue = "IOException occurred in server.";
+            byte[] buf = new byte[256];
+            // receive request
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+            socket.receive(packet);
+            return packet;
+        }catch(IOException e){
+            System.out.println(e);
+            return null;
         }
-        return returnValue;
+    }
+
+    private String sendData(String data, DatagramPacket clientPacket) {
+        try {
+            byte[] buf = new byte[256];
+            buf = data.getBytes();
+            // send the response to the client at "address" and "port"
+            InetAddress address = clientPacket.getAddress();
+            int port = clientPacket.getPort();
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
+            socket.send(packet);
+            return "sucsess";
+        }catch(IOException e){
+            System.out.println(e);
+            return "failed";
+        }
     }
 }
