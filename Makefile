@@ -14,8 +14,8 @@ default: $(CLASS_FILES)
 clean:
 	rm $(BINDIR)/*.class
 runServer:
-	java -cp bin QuoteServer
+	java -cp bin ChatServer
 runClient:
-	java -cp bin QuoteClient
+	java -cp bin ChatClient
 
 		
