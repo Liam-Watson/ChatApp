@@ -5,8 +5,8 @@ BINDIR=bin
 $(BINDIR)/%.class:$(SRCDIR)/%.java
 	$(JAVAC) -d $(BINDIR)/ -cp $(BINDIR) $<
 
-CLASSES=QuoteClient.class QuoteServerThread.class \
-        QuoteServer.class
+CLASSES=ChatClient.class ChatServerThread.class \
+        ChatServer.class
 CLASS_FILES=$(CLASSES:%.class=$(BINDIR)/%.class)
 
 default: $(CLASS_FILES)
