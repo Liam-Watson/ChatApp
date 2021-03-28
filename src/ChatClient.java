@@ -25,15 +25,20 @@ public class ChatClient extends JFrame implements ActionListener {
         chatApp = new ChatClient();
 
         login = new JFrame("login/sign-up");
+        login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         login.setSize(400,200);
         login.setLayout(new BorderLayout());
 
         JPanel textFeilds = new JPanel();
-        textFeilds.setLayout(new GridLayout(1,1));
+        textFeilds.setSize(400, 50);
+        textFeilds.setLayout(new GridLayout(2,2));
+        textFeilds.setBorder(new EmptyBorder(10, 20, 10, 20) );
         JLabel usrNme = new JLabel("Username:");
         JLabel pssWd = new JLabel("Password:");
         usrNmeIn = new JTextField();
         passWdIn = new JTextField();
+        usrNmeIn.setSize(300, 50);
+        passWdIn.setSize(300, 50);
         textFeilds.add(usrNme);
         textFeilds.add(usrNmeIn);
         textFeilds.add(pssWd);

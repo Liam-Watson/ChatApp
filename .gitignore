@@ -29,3 +29,9 @@ hs_err_pid*
 
 #Ignore history files
 /.history
+
+#OS and IDE
+.DS_Store
+src/.DS_Store
+src/.idea/
+src/Assignment1.iml
