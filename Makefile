@@ -5,7 +5,8 @@ BINDIR=bin
 $(BINDIR)/%.class:$(SRCDIR)/%.java
 	$(JAVAC) -d $(BINDIR)/ -cp $(BINDIR) $<
 
-CLASSES=NetworkMessage.class \
+CLASSES=NetworkMessage.class User.class\
+	ChatMessage.class Chat.class \
 	ChatClient.class ChatServerThread.class \
         ChatServer.class
 CLASS_FILES=$(CLASSES:%.class=$(BINDIR)/%.class)

@@ -38,7 +38,10 @@ public class ChatServerThread extends Thread {
     protected DatagramSocket socket = null;
     protected BufferedReader in = null;
     protected boolean moreQuotes = true;
-
+    
+    private ArrayList<User> users;
+    private ArrayList<Chat> chats;
+    
     public ChatServerThread() throws IOException {
         this("QuoteServerThread");
     }
@@ -46,8 +49,42 @@ public class ChatServerThread extends Thread {
     public ChatServerThread(String name) throws IOException {
         super(name);
         socket = new DatagramSocket(4445);
+        
+        initUsers();
+        initChats();
     }
 
+    private void initUsers(){
+        users = new ArrayList<User>();
+        try{
+            Scanner scFile = new Scanner(new File("res/Users.txt"));
+            while(scFile.hasNext()){
+                Scanner scLine = new Scanner(scFile.nextLine()).useDelimiter("#");
+                users.add(new User(scLine.next(), scLine.next(), scLine.next()));
+                scLine.close();
+            }
+            scFile.close();    
+        }catch (IOException e){System.out.println(e);}
+    }
+    
+    private void initChats(){
+        chats = new ArrayList<Chat>();
+        File folder = new File("res/Chats");
+        File[] listOfFiles = folder.listFiles();
+        
+        for (int i = 0; i < listOfFiles.length; i++) {
+            try{
+                Scanner scDir = new Scanner(listOfFiles[i]);
+                Scanner scFileName = new Scanner(listOfFiles[i].getName()).useDelimiter("#");
+                Chat chat = new Chat(scFileName.next(),scFileName.next());
+                chat.initChat(scDir);
+                chats.add(chat);
+                scDir.close();
+            }catch(IOException e){e.printStackTrace();}
+        }
+    
+    }
+    
     public void run() {
         int i = 0;
         while (i < 200) {
