@@ -18,6 +18,6 @@ clean:
 runServer:
 	java -cp bin ChatServer
 runClient:
-	java -cp bin ChatClient
+	java -cp bin ChatClient localhost
 
 		
