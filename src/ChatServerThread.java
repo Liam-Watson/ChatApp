@@ -91,6 +91,33 @@ public class ChatServerThread extends Thread {
             DatagramPacket clientPacket = receiveData();
             //Get the string from the packet
             String received = new String(clientPacket.getData(), 0, clientPacket.getLength());
+	    //Parse string message to message object
+	    NetworkMessage message = new NetworkMessage(received);
+	    switch(message.getFunction()){
+		case 1:
+			//recieveMessage
+			break;
+		case 2:
+			//sendMessage
+			break;
+		case 3:
+			sendData(createUser(message).toString(), clientPacket);
+			//createUser
+			break;
+		case 4:
+			//UserJoined
+			break;
+		case 5:
+			//Send history
+			break;
+		case 6:
+			//createChat
+			break;
+		default:
+			//TODO: This is the error case, we should handle this by sending back a failed message to client
+			break;
+
+	    }
             System.out.println(received);
             sendData(received, clientPacket);
             i++;
@@ -125,5 +152,38 @@ public class ChatServerThread extends Thread {
             System.out.println(e);
             return "failed";
         }
+    }
+    /*
+     * We return a message based on if a user exists or not
+     * Currently the status and message are the same I think we should decide on how to seperate them. TODO
+     */
+    private NetworkMessage createUser(NetworkMessage message){
+	if(userExists(message)){
+		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "User" + message.getUser() + " already exists", "User " +message.getUser() + " already exists");
+		return response;
+	}else{
+		writeToFile(message.getUser() + "#" + message.getMessage(), "res/Users.txt");
+		//TODO: we need to decide on a number for response messages, I have used -1
+		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "User succsessfully created", "User succsessfully created");
+	      	return response;	
+	}	
+    }
+    private boolean userExists(NetworkMessage message){
+    	User user = new User(message.getUser(), message.getMessage());
+	if(users.contains(user)){
+	       	return true;
+	}else{
+	        return false;
+	}
+    }
+
+    private void writeToFile(String data, String fileName){
+	try{
+		FileWriter writer = new FileWriter(fileName, true);
+		writer.append(data + "\n");
+		writer.close();
+	}catch(IOException e){
+		e.printStackTrace();
+	}
     }
 }

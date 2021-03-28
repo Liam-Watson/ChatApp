@@ -26,3 +26,6 @@ hs_err_pid*
 *~
 #Bin
 /bin
+
+#Ignore history files
+/.history

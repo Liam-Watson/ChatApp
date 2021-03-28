@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class User{
+public class User {
     private String username;
     private String password;
     private ArrayList<String> chats;
@@ -30,7 +30,13 @@ public class User{
     public boolean authenticate(String u, String p){
         return username.equals(u) && password.equals(p);
     }
-    
+    public boolean equals(User user){
+	if(user != null && user instanceof User && this.username == user.username && this.password == user.username){
+	       	return true; 
+	}else{
+       		return false;
+	}
+    }
     public boolean addChat(String c){
         if(chats.contains(c)) return false;
         

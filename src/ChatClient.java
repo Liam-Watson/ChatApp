@@ -8,6 +8,7 @@ import java.net.*;
 import java.util.*;
 
 public class ChatClient extends JFrame implements ActionListener {
+    static DatagramSocket socket;
     ArrayList<String[]> chatsList = new ArrayList<String[]>();
     static ChatClient chatApp;
     static JTextField usrNmeIn;
@@ -16,6 +17,11 @@ public class ChatClient extends JFrame implements ActionListener {
 
     public static void main(String[] args) throws IOException {
 
+        socket = new DatagramSocket();
+        if (args.length != 1) {
+            System.out.println("Usage: java QuoteClient <hostname>");
+            return;
+        }
         chatApp = new ChatClient();
 
         login = new JFrame("login/sign-up");
@@ -94,6 +100,10 @@ public class ChatClient extends JFrame implements ActionListener {
 //            System.out.println("From server: " + received);
 //            socket.close();
 //        }
+    Scanner in = new Scanner(System.in);
+    String inpt = "";
+    //Note here "register" is a place holder that will be determined by user button click @Luc
+    joinServer(in.next(), in.next(), "register", InetAddress.getByName(args[0]));
 
 
     }
@@ -165,9 +175,23 @@ public class ChatClient extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String action = e.getActionCommand();
         switch (action){
-
         }
     }
+	/*
+	 * Regster a user with the server by sending a packet containing a name and password
+	 * @params register is a variable to tell the server if a user wishes to sign in or create a new user
+	 * On the server side we get name from userName and the intent from status and password from message
+	 */
+	private static void joinServer(String name, String password, String register, InetAddress address){
+		NetworkMessage message = new NetworkMessage(3, name, register, password);
+		byte[] buf = message.toString().getBytes();
+		try{
+			DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
+			socket.send(packet);
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+	}
 }
 
 
