@@ -54,6 +54,11 @@ public class ChatClient extends JFrame implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 login.setVisible(false);
                 chatApp.setVisible(true);
+                try {
+                    joinServer(usrNmeIn.getText(), passWdIn.getText(), "login", InetAddress.getByName(args[0]));
+                } catch (UnknownHostException unknownHostException) {
+                    unknownHostException.printStackTrace();
+                }
             }
         });
         JButton signUpBtn = new JButton("Sign Up");
@@ -62,6 +67,11 @@ public class ChatClient extends JFrame implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 login.setVisible(false);
                 chatApp.setVisible(true);
+                try {
+                    joinServer(usrNmeIn.getText(), passWdIn.getText(), "register", InetAddress.getByName(args[0]));
+                } catch (UnknownHostException unknownHostException) {
+                    unknownHostException.printStackTrace();
+                }
             }
         });
         buttons.add(loginBtn);
