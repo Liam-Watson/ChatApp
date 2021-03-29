@@ -198,11 +198,18 @@ public class ChatClient extends JFrame implements ActionListener {
 	 * On the server side we get name from userName and the intent from status and password from message
 	 */
 	private static void joinServer(String name, String password, String register, InetAddress address){
-		NetworkMessage message = new NetworkMessage(3, name, register, password);
-		byte[] buf = message.toString().getBytes();
 		try{
-			DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-			socket.send(packet);
+			if(register.equals("login")){
+				NetworkMessage message = new NetworkMessage(4, name, register, password);
+				byte[] buf = message.toString().getBytes();
+				DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
+				socket.send(packet);
+			}else{
+				NetworkMessage message = new NetworkMessage(3, name, register, password);
+				byte[] buf = message.toString().getBytes();
+				DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
+				socket.send(packet);
+			}
 		}catch(IOException e){
 			e.printStackTrace();
 		}

@@ -60,7 +60,15 @@ public class ChatServerThread extends Thread {
             Scanner scFile = new Scanner(new File("res/Users.txt"));
             while(scFile.hasNext()){
                 Scanner scLine = new Scanner(scFile.nextLine()).useDelimiter("#");
-                users.add(new User(scLine.next(), scLine.next(), scLine.next()));
+		//This is to ensure we do not try read chats if they do not exist for a user that was just created. 
+		String userName = scLine.next();
+		String password = scLine.next();
+		if(scLine.hasNext()){
+			String userChats = scLine.next();
+			users.add(new User(userName, password, userChats));
+		}else{
+			users.add(new User(userName, password));
+		}
                 scLine.close();
             }
             scFile.close();    
@@ -105,6 +113,7 @@ public class ChatServerThread extends Thread {
 			//createUser
 			break;
 		case 4:
+			sendData(userJoined(message).toString(), clientPacket);
 			//UserJoined
 			break;
 		case 5:
@@ -114,6 +123,7 @@ public class ChatServerThread extends Thread {
 			//createChat
 			break;
 		default:
+			//sendData(generalError(), clientPacket);
 			//TODO: This is the error case, we should handle this by sending back a failed message to client
 			break;
 
@@ -159,16 +169,21 @@ public class ChatServerThread extends Thread {
      */
     private NetworkMessage createUser(NetworkMessage message){
 	if(userExists(message)){
-		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "User" + message.getUser() + " already exists", "User " +message.getUser() + " already exists");
+		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Failed", "User " +message.getUser() + " already exists");
+		System.out.println(response.toString());	
 		return response;
 	}else{
-		writeToFile(message.getUser() + "#" + message.getMessage(), "res/Users.txt");
+		writeToFile(message.getUser() + "#" + message.getMessage() + "#", "res/Users.txt");
+    		User user = new User(message.getUser(), message.getMessage());
+		users.add(user);
 		//TODO: we need to decide on a number for response messages, I have used -1
 		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "User succsessfully created", "User succsessfully created");
+		System.out.println(response.toString());	
 	      	return response;	
 	}	
     }
     private boolean userExists(NetworkMessage message){
+	System.out.println(message.getUser() + "\t" + message.getMessage());
     	User user = new User(message.getUser(), message.getMessage());
 	if(users.contains(user)){
 	       	return true;
@@ -186,4 +201,32 @@ public class ChatServerThread extends Thread {
 		e.printStackTrace();
 	}
     }
+   /*
+    *This method is to be run when we get a user login request
+    *
+    */ 
+    private NetworkMessage userJoined(NetworkMessage message){
+	if(userExists(message)){
+		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Succsess", "User " +message.getUser() + " logged in");
+		System.out.println(response.toString());	
+		return response;
+	}else{
+		//TODO: we need to decide on a number for response messages, I have used -1 NBNBNB. Maybe we should match the number with the type of request?
+		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Failed", "User" + message.getUser() + " does not exist. Try check your spelling or create a new user. ");
+		System.out.println(response.toString());	
+	      	return response;	
+	}	
+		
+
+    }
+/*
+ *    public NetworkMessage(int f, String u, String s, String m){
+ *       status =s;
+ *       messageContent = m;
+ *       user = u;
+ *       ID = u+IDcounter++;
+ *       function = f;
+ *   }
+ */
+
 }

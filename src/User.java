@@ -30,8 +30,10 @@ public class User {
     public boolean authenticate(String u, String p){
         return username.equals(u) && password.equals(p);
     }
-    public boolean equals(User user){
-	if(user != null && user instanceof User && this.username == user.username && this.password == user.username){
+    public boolean equals(Object usr){
+	User user = (User)usr;
+    	System.out.println(this.username +" "+ user.username +" "+ this.password +" " + user.password + " " + (this.username.equals(user.username) && this.password.equals(user.password)));	
+	if(user != null && user instanceof User && this.username.equals(user.username) && this.password.equals(user.password)){
 	       	return true; 
 	}else{
        		return false;
