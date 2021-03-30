@@ -21,10 +21,23 @@ public class Chat{
     public void addMessage(String line){
         messages.add(new ChatMessage(line));
     }
-    
+    public boolean equals(Object other){
+		Chat otherChat = (Chat)other;
+		if(otherChat != null && otherChat instanceof Chat && otherChat.getUser1().equals(this.user1) && otherChat.getUser2().equals(this.user2)){
+			return true;
+		}else{
+			return false;
+		}
+    }
     public String toString(){
         String out = "";
         for(ChatMessage i : messages) out += i +"\n";
         return out;
+    }
+    public String getUser1(){
+	return user1;
+    }
+    public String getUser2(){
+	return user2;
     }
 }	

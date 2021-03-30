@@ -214,6 +214,28 @@ public class ChatClient extends JFrame implements ActionListener {
 			e.printStackTrace();
 		}
 	}
+
+	public static void createChat(String currentName, String userNames, InetAddress address){
+		try{
+			NetworkMessage message = new NetworkMessage(6, currentName, "request", userNames);
+			byte[] buf = message.toString().getBytes();
+			DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
+			socket.send(packet);
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		
+	}
+	/*
+ *    public NetworkMessage(int f, String u, String s, String m){
+ *       status =s;
+ *       messageContent = m;
+ *       user = u;
+ *       ID = u+IDcounter++;
+ *       function = f;
+ *   }
+ */
+
 }
 
 

@@ -120,6 +120,7 @@ public class ChatServerThread extends Thread {
 			//Send history
 			break;
 		case 6:
+			sendData(createChat(message).toString(), clientPacket);
 			//createChat
 			break;
 		default:
@@ -218,6 +219,22 @@ public class ChatServerThread extends Thread {
 	}	
 		
 
+    }
+    private NetworkMessage createChat(NetworkMessage message){
+	String chatUsers = message.getMessage();
+	Chat newChat = new Chat(message.getUser(), chatUsers); //TODO: Should we not be able to create group chats? Maybe we construct with an arrayList?
+	if(chats.contains(newChat)){
+		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Failed", "Chat " + message.getUser() + chatUsers + " already exists.");
+		System.out.println(response.toString());
+		//Error chat already exists
+		return response;
+	}else{
+		writeToFile("", "res/Chats/" + message.getUser() + chatUsers + ".txt");		
+		chats.add(newChat);
+		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Succsess", "Chat " + message.getUser() + chatUsers + " created.");
+		System.out.println(response.toString());
+		return response;
+	}
     }
 /*
  *    public NetworkMessage(int f, String u, String s, String m){

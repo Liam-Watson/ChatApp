@@ -35,3 +35,6 @@ hs_err_pid*
 src/.DS_Store
 src/.idea/
 src/Assignment1.iml
+
+#Temp project files
+/res
