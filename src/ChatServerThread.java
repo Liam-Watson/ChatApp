@@ -179,7 +179,7 @@ public class ChatServerThread extends Thread {
     		User user = new User(message.getUser(), message.getMessage());
 		users.add(user);
 		//TODO: we need to decide on a number for response messages, I have used -1
-		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "User succsessfully created", "User succsessfully created");
+		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Success", "User succsessfully created");
 		System.out.println(response.toString());	
 	      	return response;	
 	}	
@@ -209,7 +209,7 @@ public class ChatServerThread extends Thread {
     */ 
     private NetworkMessage userJoined(NetworkMessage message){
 	if(userExists(message)){
-		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Succsess", "User " +message.getUser() + " logged in");
+		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Success", "User " +message.getUser() + " logged in");
 		System.out.println(response.toString());	
 		return response;
 	}else{

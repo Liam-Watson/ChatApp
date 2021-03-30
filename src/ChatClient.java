@@ -319,14 +319,24 @@ public class ChatClient extends JFrame implements ActionListener {
     }
 
     public static boolean getLoginConfirmation(){
-	    boolean confirmed = true;
 	    //get response from server if the login succeeded.
-	    return confirmed;
+	    NetworkMessage response = receiveData();
+	    System.out.println(response.toString());
+	    if(response.getStatus().equals("Success")){
+		return true;
+	    }else{
+		return false;
+	    }
     }
     public static boolean getNewChatConfirmation(){
-        boolean confirmed = true;
         //get response from server if the chat creation succeeded.
-        return confirmed;
+	NetworkMessage response = receiveData();
+	System.out.println(response.toString());
+	if(response.getStatus().equals("Success")){
+		return true;
+	}else{
+		return false;
+	}
     }
 
     public void sendMessage(String user, String chat, String message){
