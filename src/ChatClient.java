@@ -337,6 +337,10 @@ public class ChatClient extends JFrame implements ActionListener {
     }
     public void updateChat(Chat mostRecent){
 	    //send request to update chat and receive the messages after the most recent message stored
+
+        Chat updatedChat; //destination variable for most recent chat object
+
+
     }
 	/*
  *    public NetworkMessage(int f, String u, String s, String m){
