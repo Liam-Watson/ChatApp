@@ -10,19 +10,24 @@ import java.util.*;
 public class ChatClient extends JFrame implements ActionListener {
     static DatagramSocket socket;
     static ArrayList<Chat> chatsList = new ArrayList<Chat>();
+    ArrayList<JButton> chatButtons = new ArrayList<JButton>();
+    JTextField message = new JTextField();
     static ChatClient chatApp;
     static JTextField usrNmeIn;
     static JTextField passWdIn;
     static JFrame login;
+    static String username;
+    static String openChat;
+    static InetAddress serverAddress;
 
     public static void main(String[] args) throws IOException {
-
+        serverAddress = InetAddress.getByName(args[0]);
         socket = new DatagramSocket();
         if (args.length != 1) {
             System.out.println("Usage: java QuoteClient <hostname>");
             return;
         }
-        chatApp = new ChatClient();
+
 
         login = new JFrame("login/sign-up");
         login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -52,25 +57,44 @@ public class ChatClient extends JFrame implements ActionListener {
         loginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                login.setVisible(false);
-                chatApp.setVisible(true);
+
                 try {
                     joinServer(usrNmeIn.getText(), passWdIn.getText(), "login", InetAddress.getByName(args[0]));
                 } catch (UnknownHostException unknownHostException) {
                     unknownHostException.printStackTrace();
                 }
+                boolean success = getLoginConfirmation();
+                if(success){
+                    username = usrNme.getText();
+                    login.setVisible(false);
+                    getChatHistory();
+                    chatApp = new ChatClient();
+                    chatApp.setVisible(true);
+                }else{
+                    JOptionPane.showMessageDialog(null, "Login has failed please try again");
+                }
+
             }
         });
         JButton signUpBtn = new JButton("Sign Up");
         signUpBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                login.setVisible(false);
-                chatApp.setVisible(true);
+
                 try {
                     joinServer(usrNmeIn.getText(), passWdIn.getText(), "register", InetAddress.getByName(args[0]));
                 } catch (UnknownHostException unknownHostException) {
                     unknownHostException.printStackTrace();
+                }
+                boolean success = getLoginConfirmation();
+                if(success){
+                    username = usrNme.getText();
+                    login.setVisible(false);
+                    //getChatHistory();
+                    chatApp = new ChatClient();
+                    chatApp.setVisible(true);
+                }else{
+                    JOptionPane.showMessageDialog(null, "Signup has failed please try again");
                 }
             }
         });
@@ -132,14 +156,11 @@ public class ChatClient extends JFrame implements ActionListener {
 
 
 
-        ArrayList<JButton> chatButtons = new ArrayList<JButton>();
+
         chatButtons.add(new JButton("test"));
         chatButtons.add(new JButton("+"));
 
-        for(int i = 0; i < chatsList.size(); i++){
-            Chat currentChat = chatsList.get(i);
-            chatButtons.add(new JButton());
-        }
+        populateChatButton();
         JPanel chats = new JPanel();
         chats.setLayout(new GridLayout(chatButtons.size(),0));
         chats.setBackground(Color.GRAY);
@@ -169,7 +190,7 @@ public class ChatClient extends JFrame implements ActionListener {
         input.setLayout(new BorderLayout());
         input.setBorder(new EmptyBorder(10, 10, 10, 10) );
 
-        JTextField message = new JTextField();
+
         message.setSize(400, 500);
         input.add(message, BorderLayout.CENTER);
 
@@ -184,12 +205,27 @@ public class ChatClient extends JFrame implements ActionListener {
 
 
     }
+    public void populateChatButton(){
+        for(int i = 0; i < chatsList.size(); i++){
+            Chat currentChat = chatsList.get(i);
+            chatButtons.add(new JButton(currentChat.getUser1() + ", " + currentChat.getUser2()));
+        }
+    }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
         String action = e.getActionCommand();
         switch (action){
+            case "send":
+                sendMessage(username, openChat ,message.getText());
+                break;
+            case "+":
+                String otherUser = "";
+
+                otherUser = JOptionPane.showInputDialog("Enter the name of the user you want to chat with");
+                createChat(username, otherUser, serverAddress);
+                break;
         }
     }
 	/*
@@ -227,6 +263,7 @@ public class ChatClient extends JFrame implements ActionListener {
 		
 	}
 	public static void getChatHistory() {
+	    //send packet to request chats
         byte[] buf = new byte[256];
         DatagramPacket packet= new DatagramPacket(buf, buf.length);
         try {
@@ -236,14 +273,28 @@ public class ChatClient extends JFrame implements ActionListener {
         }
         NetworkMessage in = new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
         String chatsReceived = in.getMessage();
-
-        String [] breakChats = chatsReceived.split("~");
-        for (int i = 0; i < breakChats.length ; i++){
-            String currentChat = breakChats[i];
-            String [] lines = currentChat.split("\n");
-            String [] users = lines[0].split(",");
+        if(chatsReceived.length() > 1) {
+            String[] breakChats = chatsReceived.split("~");
+            for (int i = 0; i < breakChats.length; i++) {
+                String currentChat = breakChats[i];
+                Chat newChat = new Chat(currentChat);
+                chatsList.add(newChat);
+            }
         }
 
+    }
+
+    public static boolean getLoginConfirmation(){
+	    boolean confirmed = true;
+	    //get response from server if the login succeeded.
+	    return confirmed;
+    }
+
+    public void sendMessage(String user, String chat, String message){
+        //send message to server to update chat
+    }
+    public void updateChat(ChatMessage mostRecent){
+	    //send request to update chat and receive the messages after the most recent message stored
     }
 	/*
  *    public NetworkMessage(int f, String u, String s, String m){
