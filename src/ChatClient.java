@@ -20,7 +20,6 @@ public class ChatClient extends JFrame implements ActionListener {
     static String username;
     static String openChat;
     static InetAddress serverAddress;
-
     public static void main(String[] args) throws IOException {
         serverAddress = InetAddress.getByName(args[0]);
         socket = new DatagramSocket();
@@ -270,38 +269,35 @@ public class ChatClient extends JFrame implements ActionListener {
 	 * On the server side we get name from userName and the intent from status and password from message
 	 */
 	private static void joinServer(String name, String password, String register, InetAddress address){
-		try{
-			if(register.equals("login")){
-				NetworkMessage message = new NetworkMessage(4, name, register, password);
-				byte[] buf = message.toString().getBytes();
-				DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-				socket.send(packet);
-			}else{
-				NetworkMessage message = new NetworkMessage(3, name, register, password);
-				byte[] buf = message.toString().getBytes();
-				DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-				socket.send(packet);
-			}
-		}catch(IOException e){
-			e.printStackTrace();
+		if(register.equals("login")){
+			NetworkMessage message = new NetworkMessage(4, name, register, password);
+			sendData(message.toString());
+			//byte[] buf = message.toString().getBytes();
+			//DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
+			//socket.send(packet);
+		}else{
+			NetworkMessage message = new NetworkMessage(3, name, register, password);
+			sendData(message.toString());
+			//byte[] buf = message.toString().getBytes();
+			//DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
+			//socket.send(packet);
 		}
 	}
 
 	public static void createChat(String currentName, String userNames, InetAddress address){
-		try{
-			NetworkMessage message = new NetworkMessage(6, currentName, "request", userNames);
-			byte[] buf = message.toString().getBytes();
-			DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-			socket.send(packet);
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-		
+		NetworkMessage message = new NetworkMessage(6, currentName, "request", userNames);
+		sendData(message.toString());	
+		//byte[] buf = message.toString().getBytes();
+		//DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
+		//socket.send(packet);
 	}
 	public static void getChatHistory() {
-	    //send packet to request chats
+	//send packet to request chats
+	NetworkMessage request = new NetworkMessage(5, username, "request", username);
+	sendData(request.toString());
         chatsList.clear();
         byte[] buf = new byte[256];
+	
         DatagramPacket packet= new DatagramPacket(buf, buf.length);
         try {
             socket.receive(packet);
@@ -351,6 +347,34 @@ public class ChatClient extends JFrame implements ActionListener {
 
 
     }
+    //Try to use this method as a pattern to recieve packets
+    private static NetworkMessage receiveData() {
+        try {
+            byte[] buf = new byte[256];
+            // receive request
+            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+            socket.receive(packet);
+            return new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
+        }catch(IOException e){
+            System.out.println(e);
+            return null;
+        }
+    }
+    //Try to use this method as a pattern to send packets
+    private static String sendData(String data) {
+        try {
+            byte[] buf = new byte[256];
+            buf = data.getBytes();
+            // send the response to the client at "address" and "port"
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddress, 4445);
+            socket.send(packet);
+            return "sucsess";
+        }catch(IOException e){
+            System.out.println(e);
+            return "failed";
+        }
+    }
+
 	/*
  *    public NetworkMessage(int f, String u, String s, String m){
  *       status =s;

@@ -53,4 +53,11 @@ public class Chat{
     public String getUser2(){
 	return user2;
     }
+    public boolean userPartOfChat(String userName){
+	if(userName.equals(user1) || userName.equals(user2)){
+		return true;
+	}else{
+		return false;
+	}
+    }
 }	

@@ -237,9 +237,26 @@ public class ChatServerThread extends Thread {
 		return response;
 	}
     }
-
+    /*
+     * Here we find all the chats a user is part of and return a network message contianing them. 
+     * This method is to be used to intially populate a users chats on login. 
+     */
     private NetworkMessage sendMessageHistory(NetworkMessage message){
-	return null;	
+    	//TODO: Validate that userNames and messages do not contain our delimiters :(
+	String userName = message.getUser();
+	ArrayList<Chat> userChats = new ArrayList<Chat>();
+	String history = "";
+	for(Chat c : chats){
+		if(c.userPartOfChat(userName)){
+			history += c.toString() + "~";
+		}
+	}
+	if(history.equals("")){
+		return new NetworkMessage(-1, message.getUser(), "Failed", history);	
+	}else{
+		return new NetworkMessage(-1, message.getUser(), "Success", history);	
+	}
+   	 
     }
 /*
  *    public NetworkMessage(int f, String u, String s, String m){
