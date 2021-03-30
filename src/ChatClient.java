@@ -9,7 +9,7 @@ import java.util.*;
 
 public class ChatClient extends JFrame implements ActionListener {
     static DatagramSocket socket;
-    ArrayList<String[]> chatsList = new ArrayList<String[]>();
+    static ArrayList<Chat> chatsList = new ArrayList<Chat>();
     static ChatClient chatApp;
     static JTextField usrNmeIn;
     static JTextField passWdIn;
@@ -137,8 +137,8 @@ public class ChatClient extends JFrame implements ActionListener {
         chatButtons.add(new JButton("+"));
 
         for(int i = 0; i < chatsList.size(); i++){
-            String[] currentChat = chatsList.get(i);
-            chatButtons.add(new JButton(currentChat[0]));
+            Chat currentChat = chatsList.get(i);
+            chatButtons.add(new JButton());
         }
         JPanel chats = new JPanel();
         chats.setLayout(new GridLayout(chatButtons.size(),0));
@@ -226,6 +226,25 @@ public class ChatClient extends JFrame implements ActionListener {
 		}
 		
 	}
+	public static void getChatHistory() {
+        byte[] buf = new byte[256];
+        DatagramPacket packet= new DatagramPacket(buf, buf.length);
+        try {
+            socket.receive(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        NetworkMessage in = new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
+        String chatsReceived = in.getMessage();
+
+        String [] breakChats = chatsReceived.split("~");
+        for (int i = 0; i < breakChats.length ; i++){
+            String currentChat = breakChats[i];
+            String [] lines = currentChat.split("\n");
+            String [] users = lines[0].split(",");
+        }
+
+    }
 	/*
  *    public NetworkMessage(int f, String u, String s, String m){
  *       status =s;
