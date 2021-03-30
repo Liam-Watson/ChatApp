@@ -12,6 +12,7 @@ public class ChatClient extends JFrame implements ActionListener {
     static ArrayList<Chat> chatsList = new ArrayList<Chat>();
     static ArrayList<JButton> chatButtons = new ArrayList<JButton>();
     JTextField message = new JTextField();
+    JTextArea chatContent = new JTextArea();
     static ChatClient chatApp;
     static JTextField usrNmeIn;
     static JTextField passWdIn;
@@ -164,7 +165,7 @@ public class ChatClient extends JFrame implements ActionListener {
         chat.setBackground(Color.lightGray);
         chat.setBorder(new EmptyBorder(30, 10, 0, 10) );
 
-        JTextArea chatContent = new JTextArea();
+
         chatContent.setSize(40, 50);
         chatContent.setBorder(new EmptyBorder(30, 30, 30, 30) );
         chatContent.setEditable(false);
@@ -213,6 +214,7 @@ public class ChatClient extends JFrame implements ActionListener {
             }
         }
         chatButtons.add(new JButton("test"));
+        openChat = "test";
         chatButtons.add(new JButton("+"));
 
         JPanel chats = new JPanel();
@@ -237,6 +239,9 @@ public class ChatClient extends JFrame implements ActionListener {
                                 JOptionPane.showMessageDialog(null, "Chat creation has failed, other user not found");
                             }
                             break;
+                        default:
+                            openChat = action;
+                            break;
                     }
                 }
             });
@@ -254,6 +259,7 @@ public class ChatClient extends JFrame implements ActionListener {
         switch (action){
             case "send":
                 sendMessage(username, openChat ,message.getText());
+
                 break;
 
         }
@@ -329,7 +335,7 @@ public class ChatClient extends JFrame implements ActionListener {
     public void sendMessage(String user, String chat, String message){
         //send message to server to update chat
     }
-    public void updateChat(ChatMessage mostRecent){
+    public void updateChat(Chat mostRecent){
 	    //send request to update chat and receive the messages after the most recent message stored
     }
 	/*
