@@ -117,6 +117,7 @@ public class ChatServerThread extends Thread {
 			//UserJoined
 			break;
 		case 5:
+			sendData(sendMessageHistory(message).toString(), clientPacket);
 			//Send history
 			break;
 		case 6:
@@ -235,6 +236,10 @@ public class ChatServerThread extends Thread {
 		System.out.println(response.toString());
 		return response;
 	}
+    }
+
+    private NetworkMessage sendMessageHistory(NetworkMessage message){
+	return null;	
     }
 /*
  *    public NetworkMessage(int f, String u, String s, String m){
