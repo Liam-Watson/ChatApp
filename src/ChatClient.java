@@ -225,6 +225,7 @@ public class ChatClient extends JFrame implements ActionListener {
 
                 otherUser = JOptionPane.showInputDialog("Enter the name of the user you want to chat with");
                 createChat(username, otherUser, serverAddress);
+                boolean success = getNewChatConfirmation();
                 break;
         }
     }
@@ -288,6 +289,11 @@ public class ChatClient extends JFrame implements ActionListener {
 	    boolean confirmed = true;
 	    //get response from server if the login succeeded.
 	    return confirmed;
+    }
+    public static boolean getNewChatConfirmation(){
+        boolean confirmed = true;
+        //get response from server if the chat creation succeeded.
+        return confirmed;
     }
 
     public void sendMessage(String user, String chat, String message){
