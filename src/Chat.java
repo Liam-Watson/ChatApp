@@ -44,6 +44,9 @@ public class Chat{
         for(ChatMessage i : messages) out += i +"\n";
         return out;
     }
+    public String getChatName(){
+        return (user1 + ", " + user2);
+    }
     public String getUser1(){
 	return user1;
     }

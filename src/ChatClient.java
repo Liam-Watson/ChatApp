@@ -335,10 +335,19 @@ public class ChatClient extends JFrame implements ActionListener {
     public void sendMessage(String user, String chat, String message){
         //send message to server to update chat
     }
-    public void updateChat(Chat mostRecent){
+    public void updateChat(String ChatName, ChatMessage mostRecent){
 	    //send request to update chat and receive the messages after the most recent message stored
 
-        Chat updatedChat; //destination variable for most recent chat object
+        ArrayList<ChatMessage> newMessages = new ArrayList<ChatMessage>();
+
+         //destination variable for most recent chat object
+        for(int i = 0; i < chatsList.size(); i++){
+            if(ChatName.equals(chatsList.get(i).getChatName())){
+                for(int j = 0; j < newMessages.size(); j++){
+                    chatsList.get(i).addMessage(newMessages.get(i).toString());
+                }
+            }
+        }
 
 
     }
