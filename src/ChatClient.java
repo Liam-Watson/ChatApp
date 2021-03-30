@@ -10,7 +10,7 @@ import java.util.*;
 public class ChatClient extends JFrame implements ActionListener {
     static DatagramSocket socket;
     static ArrayList<Chat> chatsList = new ArrayList<Chat>();
-    ArrayList<JButton> chatButtons = new ArrayList<JButton>();
+    static ArrayList<JButton> chatButtons = new ArrayList<JButton>();
     JTextField message = new JTextField();
     static ChatClient chatApp;
     static JTextField usrNmeIn;
@@ -67,8 +67,8 @@ public class ChatClient extends JFrame implements ActionListener {
                 if(success){
                     username = usrNme.getText();
                     login.setVisible(false);
-                    getChatHistory();
                     chatApp = new ChatClient();
+                    generateChatButtons();
                     chatApp.setVisible(true);
                 }else{
                     JOptionPane.showMessageDialog(null, "Login has failed please try again");
@@ -90,8 +90,8 @@ public class ChatClient extends JFrame implements ActionListener {
                 if(success){
                     username = usrNme.getText();
                     login.setVisible(false);
-                    //getChatHistory();
                     chatApp = new ChatClient();
+                    generateChatButtons();
                     chatApp.setVisible(true);
                 }else{
                     JOptionPane.showMessageDialog(null, "Signup has failed please try again");
@@ -157,21 +157,6 @@ public class ChatClient extends JFrame implements ActionListener {
 
 
 
-        chatButtons.add(new JButton("test"));
-        chatButtons.add(new JButton("+"));
-
-        populateChatButton();
-        JPanel chats = new JPanel();
-        chats.setLayout(new GridLayout(chatButtons.size(),0));
-        chats.setBackground(Color.GRAY);
-
-        for(int i = 0; i < chatButtons.size(); i++){
-            chatButtons.get(i).addActionListener(this);
-            chatButtons.get(i).setSize(200,700);
-            chats.add(chatButtons.get(i));
-        }
-
-        add(chats, BorderLayout.WEST);
 
         JPanel chat = new JPanel();
         chat.setLayout(new BorderLayout());
@@ -205,11 +190,61 @@ public class ChatClient extends JFrame implements ActionListener {
 
 
     }
-    public void populateChatButton(){
+    public static void populateChatButton(){
+        chatButtons.clear();
         for(int i = 0; i < chatsList.size(); i++){
             Chat currentChat = chatsList.get(i);
             chatButtons.add(new JButton(currentChat.getUser1() + ", " + currentChat.getUser2()));
         }
+    }
+    public static void generateChatButtons(){
+        getChatHistory();
+        populateChatButton();
+        if(chatApp != null){
+            Component[] componentList = chatApp.getComponents();
+
+            for(Component c : componentList){
+                if(c instanceof JPanel){
+                    if(c.getName().equals("chats")){
+                        chatApp.remove(c);
+                    }
+
+                }
+            }
+        }
+        chatButtons.add(new JButton("test"));
+        chatButtons.add(new JButton("+"));
+
+        JPanel chats = new JPanel();
+        chats.setLayout(new GridLayout(chatButtons.size(),0));
+        chats.setBackground(Color.GRAY);
+
+        for(int i = 0; i < chatButtons.size(); i++){
+            chatButtons.get(i).addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String action = e.getActionCommand();
+                    switch (action){
+                        case "+":
+                            String otherUser = "";
+
+                            otherUser = JOptionPane.showInputDialog("Enter the name of the user you want to chat with");
+                            createChat(username, otherUser, serverAddress);
+                            boolean success = getNewChatConfirmation();
+                            if(success){
+                                generateChatButtons();
+                            }else{
+                                JOptionPane.showMessageDialog(null, "Chat creation has failed, other user not found");
+                            }
+                            break;
+                    }
+                }
+            });
+            chatButtons.get(i).setSize(200,700);
+            chats.add(chatButtons.get(i));
+        }
+
+        chatApp.add(chats, BorderLayout.WEST);
     }
 
 
@@ -220,13 +255,7 @@ public class ChatClient extends JFrame implements ActionListener {
             case "send":
                 sendMessage(username, openChat ,message.getText());
                 break;
-            case "+":
-                String otherUser = "";
 
-                otherUser = JOptionPane.showInputDialog("Enter the name of the user you want to chat with");
-                createChat(username, otherUser, serverAddress);
-                boolean success = getNewChatConfirmation();
-                break;
         }
     }
 	/*
@@ -265,6 +294,7 @@ public class ChatClient extends JFrame implements ActionListener {
 	}
 	public static void getChatHistory() {
 	    //send packet to request chats
+        chatsList.clear();
         byte[] buf = new byte[256];
         DatagramPacket packet= new DatagramPacket(buf, buf.length);
         try {
@@ -274,7 +304,7 @@ public class ChatClient extends JFrame implements ActionListener {
         }
         NetworkMessage in = new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
         String chatsReceived = in.getMessage();
-        if(chatsReceived.length() > 1) {
+        if(chatsReceived.length() > 100) {
             String[] breakChats = chatsReceived.split("~");
             for (int i = 0; i < breakChats.length; i++) {
                 String currentChat = breakChats[i];
