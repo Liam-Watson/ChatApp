@@ -25,10 +25,11 @@ public class ChatMessage{
         user = scLine.next();
         dateTime = scLine.next();
         content = scLine.next();
-        
-        Scanner scan = new Scanner(scLine.next()).useDelimiter(";");
-        while(scan.hasNext()) readBy.add(scan.next());
-        scan.close();
+       	if(scLine.hasNext()){ 
+        	Scanner scan = new Scanner(scLine.next()).useDelimiter(";");
+		while(scan.hasNext()) readBy.add(scan.next());
+        	scan.close();
+	}
         
         scLine.close();
     }

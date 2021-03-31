@@ -83,6 +83,7 @@ public class ChatServerThread extends Thread {
         for (int i = 0; i < listOfFiles.length; i++) {
             try{
                 Scanner scDir = new Scanner(listOfFiles[i]);
+		System.out.println("reading chat file: " + listOfFiles[i].getName());
                 Scanner scFileName = new Scanner(listOfFiles[i].getName()).useDelimiter("#");
                 Chat chat = new Chat(scFileName.next(),scFileName.next());
                 chat.initChat(scDir);
@@ -230,7 +231,8 @@ public class ChatServerThread extends Thread {
 		//Error chat already exists
 		return response;
 	}else{
-		writeToFile("", "res/Chats/" + message.getUser() + chatUsers + ".txt");		
+		System.out.println(message.getUser() + "\t" + chatUsers);
+		writeToFile("", "res/Chats/" + message.getUser() + "#" + chatUsers + ".txt");		
 		chats.add(newChat);
 		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Succsess", "Chat " + message.getUser() + chatUsers + " created.");
 		System.out.println(response.toString());
