@@ -8,7 +8,7 @@ import java.net.*;
 import java.util.*;
 
 public class ChatClient extends JFrame implements ActionListener {
-    static DatagramSocket socket;
+    static DatagramSocket socket; //This is for sending
     static ArrayList<Chat> chatsList = new ArrayList<Chat>();
     static ArrayList<JButton> chatButtons = new ArrayList<JButton>();
     JTextField message = new JTextField();
@@ -293,7 +293,6 @@ public class ChatClient extends JFrame implements ActionListener {
 	}
 
 	public static void createChat(String currentName, String userNames, InetAddress address){
-		System.out.println("Do we have a colon? " + username);	
 		NetworkMessage message = new NetworkMessage(6, currentName, "request", userNames);
 		sendData(message.toString());	
 		//byte[] buf = message.toString().getBytes();
