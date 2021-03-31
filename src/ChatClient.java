@@ -296,6 +296,7 @@ public class ChatClient extends JFrame implements ActionListener {
 	NetworkMessage request = new NetworkMessage(5, username, "request", username);
 	sendData(request.toString());
         chatsList.clear();
+
         byte[] buf = new byte[256];
 	
         DatagramPacket packet= new DatagramPacket(buf, buf.length);
@@ -334,9 +335,10 @@ public class ChatClient extends JFrame implements ActionListener {
     public void updateChat(String ChatName, ChatMessage mostRecent){
 	    //send request to update chat and receive the messages after the most recent message stored
 
+        //destination variable for most recent chat object
         ArrayList<ChatMessage> newMessages = new ArrayList<ChatMessage>();
 
-         //destination variable for most recent chat object
+
         for(int i = 0; i < chatsList.size(); i++){
             if(ChatName.equals(chatsList.get(i).getChatName())){
                 for(int j = 0; j < newMessages.size(); j++){
