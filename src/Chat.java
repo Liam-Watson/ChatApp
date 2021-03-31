@@ -31,6 +31,15 @@ public class Chat{
     public void addMessage(String line){
         messages.add(new ChatMessage(line));
     }
+    public String printMessages(){
+        String outMessages = "";
+
+        for(int i = 0; i < messages.size(); i++){
+            outMessages = outMessages + messages.get(i).getUser() + ": " + messages.get(i).getDateTime() + "\n" + messages.get(i).getContent() + "\n";
+        }
+
+        return outMessages;
+    }
     public boolean equals(Object other){
 		Chat otherChat = (Chat)other;
 		if(otherChat != null && otherChat instanceof Chat && otherChat.getUser1().equals(this.user1) && otherChat.getUser2().equals(this.user2)){

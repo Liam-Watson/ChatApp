@@ -12,7 +12,7 @@ public class ChatClient extends JFrame implements ActionListener {
     static ArrayList<Chat> chatsList = new ArrayList<Chat>();
     static ArrayList<JButton> chatButtons = new ArrayList<JButton>();
     JTextField message = new JTextField();
-    JTextArea chatContent = new JTextArea();
+    static JTextArea chatContent = new JTextArea();
     static ChatClient chatApp;
     static JTextField usrNmeIn;
     static JTextField passWdIn;
@@ -194,7 +194,7 @@ public class ChatClient extends JFrame implements ActionListener {
         chatButtons.clear();
         for(int i = 0; i < chatsList.size(); i++){
             Chat currentChat = chatsList.get(i);
-            chatButtons.add(new JButton(currentChat.getUser1() + ", " + currentChat.getUser2()));
+            chatButtons.add(new JButton(currentChat.getChatName()));
         }
     }
     public static void generateChatButtons(){
@@ -242,6 +242,14 @@ public class ChatClient extends JFrame implements ActionListener {
                             openChat = action;
                             break;
                     }
+                    Chat currentChat = new Chat("default1", "default2");
+                    for (int i = 0; i < chatsList.size(); i++) {
+                        if(chatsList.get(i).getChatName().equals(openChat)){
+                            currentChat = chatsList.get(i);
+                        }
+                    }
+                    chatContent.setText(currentChat.printMessages());
+
                 }
             });
             chatButtons.get(i).setSize(200,700);

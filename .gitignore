@@ -23,6 +23,7 @@
 hs_err_pid*
 
 #Backup
+src/*~
 *~
 #Bin
 /bin
