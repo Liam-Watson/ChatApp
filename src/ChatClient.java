@@ -65,7 +65,7 @@ public class ChatClient extends JFrame implements ActionListener {
                 }
                 boolean success = getLoginConfirmation();
                 if(success){
-                    username = usrNme.getText();
+                    username = usrNmeIn.getText();
                     login.setVisible(false);
                     chatApp = new ChatClient();
                     generateChatButtons();
@@ -88,7 +88,7 @@ public class ChatClient extends JFrame implements ActionListener {
                 }
                 boolean success = getLoginConfirmation();
                 if(success){
-                    username = usrNme.getText();
+                    username = usrNmeIn.getText();
                     login.setVisible(false);
                     chatApp = new ChatClient();
                     generateChatButtons();
@@ -285,6 +285,7 @@ public class ChatClient extends JFrame implements ActionListener {
 	}
 
 	public static void createChat(String currentName, String userNames, InetAddress address){
+	    System.out.println(currentName);
 		NetworkMessage message = new NetworkMessage(6, currentName, "request", userNames);
 		sendData(message.toString());	
 		//byte[] buf = message.toString().getBytes();
