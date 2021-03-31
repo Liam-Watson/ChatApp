@@ -84,8 +84,7 @@ public class ChatServerThread extends Thread {
             try{
                 Scanner scDir = new Scanner(listOfFiles[i]);
 		System.out.println("reading chat file: " + listOfFiles[i].getName());
-                Scanner scFileName = new Scanner(listOfFiles[i].getName()).useDelimiter("#");
-                Chat chat = new Chat(scFileName.next(),scFileName.next());
+                Chat chat = new Chat(listOfFiles[i].getName().split(";"));
                 chat.initChat(scDir);
                 chats.add(chat);
                 scDir.close();
@@ -222,19 +221,19 @@ public class ChatServerThread extends Thread {
 		
 
     }
-    private NetworkMessage createChat(NetworkMessage message){
-	String chatUsers = message.getMessage();
-	Chat newChat = new Chat(message.getUser(), chatUsers); //TODO: Should we not be able to create group chats? Maybe we construct with an arrayList?
+    private NetworkMessage createChat(NetworkMessage message){//Provide a string of all other users seperated by ";" including sender
+	String[] chatUsers = (message.getUser()+";"+message.getMessage()).split(";");
+	Chat newChat = new Chat(chatUsers); //Now takes in array 
 	if(chats.contains(newChat)){
-		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Failed", "Chat " + message.getUser() + chatUsers + " already exists.");
+		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Failed", "Chat " + String.join(";",chatUsers) + " already exists.");
 		System.out.println(response.toString());
 		//Error chat already exists
 		return response;
 	}else{
 		System.out.println(message.getUser() + "\t" + chatUsers);
-		writeToFile("", "res/Chats/" + message.getUser() + "#" + chatUsers + ".txt");		
+		writeToFile("", "res/Chats/" + String.join(";",chatUsers) + ".txt");		
 		chats.add(newChat);
-		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Succsess", "Chat " + message.getUser() + chatUsers + " created.");
+		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Succsess", "Chat " + String.join(";",chatUsers) + " created.");
 		System.out.println(response.toString());
 		return response;
 	}

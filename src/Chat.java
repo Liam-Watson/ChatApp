@@ -20,7 +20,6 @@ public class Chat{
 	}
     }
     public void initChat(Scanner scan){
-        scan.nextLine();
         while(scan.hasNext()){
 	//	System.out.println(scan.nextLine());
             messages.add(new ChatMessage(scan.nextLine()));
