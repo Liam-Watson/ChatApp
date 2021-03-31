@@ -2,26 +2,25 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Chat{
-    private String user1, user2;
+    private String[] users;
     
     private ArrayList<ChatMessage> messages;
     
-    public Chat(String u1, String u2){
-        user1 = u1;
-        user2 = u2;
+    public Chat(String[] u){
+        users = u;
         messages = new ArrayList<ChatMessage>();
     }
     public Chat(String chat){
         messages = new ArrayList<ChatMessage>();
 	String [] lines = chat.split("\n");
 	String [] users = lines[0].split(";");
-	this.user1 = users[0];
-	this.user2 = users[1];
+	
 	for(int i = 1; i < lines.length; i++){
 		messages.add(new ChatMessage(lines[i]));
 	}
     }
     public void initChat(Scanner scan){
+        scan.nextLine();
         while(scan.hasNext()){
 	//	System.out.println(scan.nextLine());
             messages.add(new ChatMessage(scan.nextLine()));
@@ -42,32 +41,37 @@ public class Chat{
     }
     public boolean equals(Object other){
 		Chat otherChat = (Chat)other;
-		if(otherChat != null && otherChat instanceof Chat && otherChat.getUser1().equals(this.user1) && otherChat.getUser2().equals(this.user2)){
-			return true;
+		if(otherChat != null && otherChat instanceof Chat){
+		    Chat temp = (Chat) other;
+		    for(int i=0;i<users.length;i++) {
+                        if(!temp.userPartOfChat(users[i])) return false;
+                    }
+                    return true;
 		}else{
 			return false;
 		}
     }
     public String toString(){
-        String out = user1+ ";" + user2 + "\n"; //TODO: Multiple users > 2 
+        String out = ""; //TODO: Multiple users > 2 
+	out+= String.join(";",users);
 	
+	out+="\n";
         for(ChatMessage i : messages) out += i +"\n";
         return out;
     }
     public String getChatName(){
-        return (user1 + ", " + user2);
+        return String.join(";",users);
     }
-    public String getUser1(){
-	return user1;
+    public String[] getUsers(){
+	return users;
     }
-    public String getUser2(){
-	return user2;
-    }
+    
     public boolean userPartOfChat(String userName){
-	if(userName.equals(user1) || userName.equals(user2)){
-		return true;
-	}else{
-		return false;
-	}
+        for(int i=0;i<users.length;i++){
+            if(userName.equals(users[i])){
+	    	return true;
+            }
+        }
+        return false;
     }
 }	
