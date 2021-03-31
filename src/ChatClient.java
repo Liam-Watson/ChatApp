@@ -285,7 +285,6 @@ public class ChatClient extends JFrame implements ActionListener {
 	}
 
 	public static void createChat(String currentName, String userNames, InetAddress address){
-	    System.out.println(currentName);
 		NetworkMessage message = new NetworkMessage(6, currentName, "request", userNames);
 		sendData(message.toString());	
 		//byte[] buf = message.toString().getBytes();
