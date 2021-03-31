@@ -104,6 +104,7 @@ public class ChatServerThread extends Thread {
 	    switch(message.getFunction()){
 		case 1:
 			//recieveMessage
+			sendData(recieveMessage(message).toString(), clientPacket);
 			break;
 		case 2:
 			//sendMessage
@@ -259,6 +260,27 @@ public class ChatServerThread extends Thread {
 	}
    	 
     }
+    
+    private NetworkMessage recieveMessage(NetworkMessage message){
+    	String[] parts = message.getMessage().split("/"); //TODO: Choose delimiter
+    	String status = "Could not find chat";
+    	//Message format: DateTime / MessageContent / Recipents(seperated by ";")
+    	ChatMessage m = new ChatMessage(0, message.getUser(), parts[0], parts[1], "");
+    	for(Chat c : chats){
+    		if(parts[2].equals(c.getChatName())){
+    			c.addMessage(m.toString());//TODO: Check who has read message
+    			status = "Message Received";
+    		}
+    	}
+    	if(status.equals("Message Received")){
+		writeToFile(m.toString(), parts[2]);
+    	} 
+    	//TODO: Call Send message method if users online
+    	return new NetworkMessage(-1, message.getUser(), status, ""); 
+    }
+    
+    
+    
 /*
  *    public NetworkMessage(int f, String u, String s, String m){
  *       status =s;
