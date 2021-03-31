@@ -266,6 +266,14 @@ public class ChatClient extends JFrame implements ActionListener {
         switch (action){
             case "send":
                 sendMessage(username, openChat ,message.getText());
+                Chat currentChat = new Chat("default1", "default2");
+                for (int i = 0; i < chatsList.size(); i++) {
+                    if(chatsList.get(i).getChatName().equals(openChat)){
+                        currentChat = chatsList.get(i);
+                        currentChat.addMessage("1#" + username + "#" + message.getText() + "#");
+                    }
+                }
+                chatContent.setText(currentChat.printMessages());
 
                 break;
 
