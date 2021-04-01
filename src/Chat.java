@@ -38,6 +38,9 @@ public class Chat{
 
         return outMessages;
     }
+    public ChatMessage getMostRecentMessage(){
+        return messages.get(messages.size()-1);
+    }
     public boolean equals(Object other){
 		Chat otherChat = (Chat)other;
 		if(otherChat != null && otherChat instanceof Chat){

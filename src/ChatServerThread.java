@@ -43,7 +43,7 @@ public class ChatServerThread extends Thread {
     private ArrayList<Chat> chats;
     
     public ChatServerThread() throws IOException {
-        this("QuoteServerThread");
+        this("ChatServerThread");
     }
 
     public ChatServerThread(String name) throws IOException {
@@ -95,7 +95,7 @@ public class ChatServerThread extends Thread {
     
     public void run() {
         int i = 0;
-        while (i < 200) {
+        while (i < 20000000) {
             DatagramPacket clientPacket = receiveData();
             //Get the string from the packet
             String received = new String(clientPacket.getData(), 0, clientPacket.getLength());
@@ -210,12 +210,12 @@ public class ChatServerThread extends Thread {
     */ 
     private NetworkMessage userJoined(NetworkMessage message){
 	if(userExists(message)){
-		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Success", "User " +message.getUser() + " logged in");
+		NetworkMessage response = new NetworkMessage(2, message.getUser(), "Success", "User " +message.getUser() + " logged in");
 		System.out.println(response.toString());	
 		return response;
 	}else{
 		//TODO: we need to decide on a number for response messages, I have used -1 NBNBNB. Maybe we should match the number with the type of request?
-		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Failed", "User" + message.getUser() + " does not exist. Try check your spelling or create a new user. ");
+		NetworkMessage response = new NetworkMessage(2, message.getUser(), "Failed", "User" + message.getUser() + " does not exist. Try check your spelling or create a new user. ");
 		System.out.println(response.toString());	
 	      	return response;	
 	}	
@@ -226,7 +226,7 @@ public class ChatServerThread extends Thread {
 	String[] chatUsers = (message.getUser()+";"+message.getMessage()).split(";");
 	Chat newChat = new Chat(chatUsers); //Now takes in array 
 	if(chats.contains(newChat)){
-		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Failed", "Chat " + String.join(";",chatUsers) + " already exists.");
+		NetworkMessage response = new NetworkMessage(3, message.getUser(), "Failed", "Chat " + String.join(";",chatUsers) + " already exists.");
 		System.out.println(response.toString());
 		//Error chat already exists
 		return response;
@@ -234,7 +234,7 @@ public class ChatServerThread extends Thread {
 		System.out.println(message.getUser() + "\t" + chatUsers);
 		writeToFile("", "res/Chats/" + String.join(";",chatUsers) + ".txt");		
 		chats.add(newChat);
-		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Succsess", "Chat " + String.join(";",chatUsers) + " created.");
+		NetworkMessage response = new NetworkMessage(3, message.getUser(), "Succsess", "Chat " + String.join(";",chatUsers) + " created.");
 		System.out.println(response.toString());
 		return response;
 	}
@@ -254,10 +254,10 @@ public class ChatServerThread extends Thread {
 		}
 	}
 	if(history.equals("")){
-		return new NetworkMessage(-1, message.getUser(), "Failed", history);	
+		return new NetworkMessage(1, message.getUser(), "Failed", history);
 	}else{
 		System.out.println("History:"+ history);
-		return new NetworkMessage(-1, message.getUser(), "Success", history);	
+		return new NetworkMessage(1, message.getUser(), "Success", history);
 	}
    	 
     }

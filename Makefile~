@@ -5,7 +5,10 @@ BINDIR=bin
 $(BINDIR)/%.class:$(SRCDIR)/%.java
 	$(JAVAC) -d $(BINDIR)/ -cp $(BINDIR) $<
 
-CLASSES=ChatClient.class ChatServerThread.class \
+CLASSES=NetworkMessage.class User.class\
+	ChatMessage.class Chat.class \
+	ClientUpdatorThread.class ClientMessageReceiverThread.class\
+	ChatClient.class ChatServerThread.class \
         ChatServer.class
 CLASS_FILES=$(CLASSES:%.class=$(BINDIR)/%.class)
 
@@ -16,6 +19,6 @@ clean:
 runServer:
 	java -cp bin ChatServer
 runClient:
-	java -cp bin ChatClient
+	java -cp bin ChatClient localhost
 
 		

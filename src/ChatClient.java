@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.PixelGrabber;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -11,7 +12,8 @@ public class ChatClient extends JFrame implements ActionListener {
     static DatagramSocket socket; //This is for sending
     static ArrayList<Chat> chatsList = new ArrayList<Chat>();
     static ArrayList<JButton> chatButtons = new ArrayList<JButton>();
-    JTextField message = new JTextField();
+    public static ArrayList<NetworkMessage> incomingMessages = new ArrayList<NetworkMessage>();
+    static JTextField message = new JTextField();
     static JTextArea chatContent = new JTextArea();
     static ChatClient chatApp;
     static JTextField usrNmeIn;
@@ -20,9 +22,25 @@ public class ChatClient extends JFrame implements ActionListener {
     static String username;
     static String openChat;
     static InetAddress serverAddress;
+    static String LoginOrSignUp;
+    static String otherUser;
+
+    static ClientUpdatorThread clUpdator;
+    static ClientMessageReceiverThread clReceiver;
+
     public static void main(String[] args) throws IOException {
+        clUpdator = new ClientUpdatorThread();
+        clUpdator.setIncommingMessages(incomingMessages);
+        clUpdator.setChatsList(chatsList);
+
         serverAddress = InetAddress.getByName(args[0]);
         socket = new DatagramSocket();
+
+        clReceiver = new ClientMessageReceiverThread();
+        clReceiver.setSocket(socket);
+        clReceiver.setIncommingMessages(incomingMessages);
+        clReceiver.start();
+
         if (args.length != 1) {
             System.out.println("Usage: java QuoteClient <hostname>");
             return;
@@ -33,6 +51,18 @@ public class ChatClient extends JFrame implements ActionListener {
         login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         login.setSize(400,200);
         login.setLayout(new BorderLayout());
+        login.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                clUpdator.keepRunning.set(false);
+                clReceiver.keepRunning.set(false);
+
+                e.getWindow().dispose();
+
+            }
+        });
+
+
 
         JPanel textFeilds = new JPanel();
         textFeilds.setSize(400, 50);
@@ -57,7 +87,7 @@ public class ChatClient extends JFrame implements ActionListener {
         loginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                LoginOrSignUp = "login";
                 try {
                     joinServer(usrNmeIn.getText(), passWdIn.getText(), "login", InetAddress.getByName(args[0]));
                 } catch (UnknownHostException unknownHostException) {
@@ -66,6 +96,7 @@ public class ChatClient extends JFrame implements ActionListener {
                 boolean success = getLoginConfirmation();
                 if(success){
                     username = usrNmeIn.getText();
+                    clUpdator.setUsername(username);
                     login.setVisible(false);
                     chatApp = new ChatClient();
                     generateChatButtons();
@@ -80,7 +111,7 @@ public class ChatClient extends JFrame implements ActionListener {
         signUpBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                LoginOrSignUp = "register";
                 try {
                     joinServer(usrNmeIn.getText(), passWdIn.getText(), "register", InetAddress.getByName(args[0]));
                 } catch (UnknownHostException unknownHostException) {
@@ -89,6 +120,7 @@ public class ChatClient extends JFrame implements ActionListener {
                 boolean success = getLoginConfirmation();
                 if(success){
                     username = usrNmeIn.getText();
+                    clUpdator.setUsername(username);
                     login.setVisible(false);
                     chatApp = new ChatClient();
                     generateChatButtons();
@@ -139,10 +171,10 @@ public class ChatClient extends JFrame implements ActionListener {
 //            System.out.println("From server: " + received);
 //            socket.close();
 //        }
-    Scanner in = new Scanner(System.in);
-    String inpt = "";
+    //Scanner in = new Scanner(System.in);
+    //String inpt = "";
     //Note here "register" is a place holder that will be determined by user button click @Luc
-    joinServer(in.next(), in.next(), "register", InetAddress.getByName(args[0]));
+    //joinServer(in.next(), in.next(), "register", InetAddress.getByName(args[0]));
 
 
     }
@@ -187,6 +219,20 @@ public class ChatClient extends JFrame implements ActionListener {
         chat.add(input, BorderLayout.SOUTH);
         add(chat, BorderLayout.CENTER);
 
+        clUpdator.start();
+
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                clUpdator.keepRunning.set(false);
+                clReceiver.keepRunning.set(false);
+
+                e.getWindow().dispose();
+
+            }
+        });
+
+
 
 
     }
@@ -227,7 +273,7 @@ public class ChatClient extends JFrame implements ActionListener {
                     String action = e.getActionCommand();
                     switch (action){
                         case "+":
-                            String otherUser = "";
+                            otherUser = "";
 
                             otherUser = JOptionPane.showInputDialog("Enter the name of the user you want to chat with");
                             createChat(username, otherUser, serverAddress);
@@ -237,19 +283,13 @@ public class ChatClient extends JFrame implements ActionListener {
                             }else{
                                 JOptionPane.showMessageDialog(null, "Chat creation has failed, other user not found");
                             }
+                            otherUser = "";
                             break;
                         default:
                             openChat = action;
                             break;
                     }
-		    String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
-                    Chat currentChat = new Chat(defaultChats);
-                    for (int i = 0; i < chatsList.size(); i++) {
-                        if(chatsList.get(i).getChatName().equals(openChat)){
-                            currentChat = chatsList.get(i);
-                        }
-                    }
-                    chatContent.setText(currentChat.printMessages());
+		            showMessages();
 
                 }
             });
@@ -259,7 +299,16 @@ public class ChatClient extends JFrame implements ActionListener {
 
         chatApp.add(chats, BorderLayout.WEST);
     }
-
+    public static void showMessages(){
+        String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
+        Chat currentChat = new Chat(defaultChats);
+        for (int i = 0; i < chatsList.size(); i++) {
+            if(chatsList.get(i).getChatName().equals(openChat)){
+                currentChat = chatsList.get(i);
+            }
+        }
+        chatContent.setText(currentChat.printMessages());
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -311,31 +360,71 @@ public class ChatClient extends JFrame implements ActionListener {
 	}
 	public static void getChatHistory() {
 	//send packet to request chats
-	NetworkMessage request = new NetworkMessage(5, username, "request", username);
-	sendData(request.toString());
+	    NetworkMessage request = new NetworkMessage(5, username, "request", username);
+	    sendData(request.toString());
         chatsList.clear();
 
-        byte[] buf = new byte[256];
-		
-        //NetworkMessage in = new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
-        NetworkMessage in = receiveData();
-	System.out.println(in.toString());
-	String chatsReceived = in.getMessage();
-        if(chatsReceived != null) {
-            String[] breakChats = chatsReceived.split("~");
-            for (int i = 0; i < breakChats.length; i++) {
-                String currentChat = breakChats[i];
-                Chat newChat = new Chat(currentChat);
-                chatsList.add(newChat);
+        NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
+        while(response.getFunction() != 1) {
+            if (incomingMessages.size() > 0) {
+
+                for (int l = 0; l < incomingMessages.size(); l++) {
+                    if (incomingMessages.get(l).getFunction() == 1) {
+                        response = incomingMessages.get(l);
+                        incomingMessages.remove(l);
+                        break;
+                    }
+                }
+            } else {
+                //resend packet
+                //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
+                sendData(request.toString());
+            }
+            if (response.getFunction() != 1) {
+                //resend packet
+                sendData(request.toString());
             }
         }
+
+
+	    System.out.println(response.toString());
+	    String chatsReceived = response.getMessage();
+	    if(chatsReceived != null) {
+	        String[] breakChats = chatsReceived.split("~");
+	        for (int i = 0; i < breakChats.length; i++) {
+	            String currentChat = breakChats[i];
+	            Chat newChat = new Chat(currentChat);
+	            chatsList.add(newChat);
+	        }
+	    }
 
     }
 
     public static boolean getLoginConfirmation(){
 	    //get response from server if the login succeeded.
-	    NetworkMessage response = receiveData();
-	    System.out.println(response.toString());
+        //sorry about these default objects, Java just wont let me use a variable that has not been initialised.
+        NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
+        while(response.getFunction() != 2) {
+            if (incomingMessages.size() > 0) {
+
+                for (int i = 0; i < incomingMessages.size(); i++) {
+                    if (incomingMessages.get(i).getFunction() == 2) {
+                        response = incomingMessages.get(i);
+                        incomingMessages.remove(i);
+                        break;
+                    }
+                }
+            } else {
+                //resend packet
+                //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
+                joinServer(usrNmeIn.getText(), passWdIn.getText(), LoginOrSignUp, serverAddress);
+            }
+            if (response.getFunction() != 2) {
+                //resend packet
+                joinServer(usrNmeIn.getText(), passWdIn.getText(), LoginOrSignUp, serverAddress);
+            }
+        }
+        System.out.println(response.toString());
 	    if(response.getStatus().equals("Success")){
 		return true;
 	    }else{
@@ -344,48 +433,52 @@ public class ChatClient extends JFrame implements ActionListener {
     }
     public static boolean getNewChatConfirmation(){
         //get response from server if the chat creation succeeded.
-	NetworkMessage response = receiveData();
-	System.out.println(response.toString());
-	if(response.getStatus().equals("Success")){
-		return true;
-	}else{
-		return false;
-	}
+        NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
+        while(response.getFunction() != 3) {
+            if (incomingMessages.size() > 0) {
+
+                for (int i = 0; i < incomingMessages.size(); i++) {
+                    if (incomingMessages.get(i).getFunction() == 3) {
+                        response = incomingMessages.get(i);
+                        incomingMessages.remove(i);
+                        break;
+                    }
+                }
+            } else {
+                //resend packet
+                //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
+                createChat(username, otherUser, serverAddress);
+            }
+            if (response.getFunction() != 3) {
+                //resend packet
+                createChat(username, otherUser, serverAddress);
+            }
+        }
+	    System.out.println(response.toString());
+	    if(response.getStatus().equals("Success")){
+		    return true;
+	    }else{
+		    return false;
+	    }
     }
 
     public void sendMessage(String user, String chat, String message){
         //send message to server to update chat
     }
-    public void updateChat(String ChatName, ChatMessage mostRecent){
-	    //send request to update chat and receive the messages after the most recent message stored
 
-        //destination variable for most recent chat object
-        ArrayList<ChatMessage> newMessages = new ArrayList<ChatMessage>();
-
-
-        for(int i = 0; i < chatsList.size(); i++){
-            if(ChatName.equals(chatsList.get(i).getChatName())){
-                for(int j = 0; j < newMessages.size(); j++){
-                    chatsList.get(i).addMessage(newMessages.get(i).toString());
-                }
-            }
-        }
-
-
-    }
     //Try to use this method as a pattern to recieve packets
-    private static NetworkMessage receiveData() {
-        try {
-            byte[] buf = new byte[256];
-            // receive request
-            DatagramPacket packet = new DatagramPacket(buf, buf.length);
-            socket.receive(packet);
-            return new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
-        }catch(IOException e){
-            e.printStackTrace();
-	    return null;
-        }
-    }
+//    private static NetworkMessage receiveData() {
+//        try {
+//            byte[] buf = new byte[256];
+//            // receive request
+//            DatagramPacket packet = new DatagramPacket(buf, buf.length);
+//            socket.receive(packet);
+//            return new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
+//        }catch(IOException e){
+//            e.printStackTrace();
+//	    return null;
+//        }
+//    }
     //Try to use this method as a pattern to send packets
     private static String sendData(String data) {
         try {
