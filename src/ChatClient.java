@@ -242,7 +242,8 @@ public class ChatClient extends JFrame implements ActionListener {
                             openChat = action;
                             break;
                     }
-                    Chat currentChat = new Chat("default1", "default2");
+		    String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
+                    Chat currentChat = new Chat(defaultChats);
                     for (int i = 0; i < chatsList.size(); i++) {
                         if(chatsList.get(i).getChatName().equals(openChat)){
                             currentChat = chatsList.get(i);
@@ -266,7 +267,8 @@ public class ChatClient extends JFrame implements ActionListener {
         switch (action){
             case "send":
                 sendMessage(username, openChat ,message.getText());
-                Chat currentChat = new Chat("default1", "default2");
+		String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
+                Chat currentChat = new Chat(defaultChats);
                 for (int i = 0; i < chatsList.size(); i++) {
                     if(chatsList.get(i).getChatName().equals(openChat)){
                         currentChat = chatsList.get(i);
@@ -314,16 +316,12 @@ public class ChatClient extends JFrame implements ActionListener {
         chatsList.clear();
 
         byte[] buf = new byte[256];
-	
-        DatagramPacket packet= new DatagramPacket(buf, buf.length);
-        try {
-            socket.receive(packet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        NetworkMessage in = new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
-        String chatsReceived = in.getMessage();
-        if(chatsReceived.length() > 100) {
+		
+        //NetworkMessage in = new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
+        NetworkMessage in = receiveData();
+	System.out.println(in.toString());
+	String chatsReceived = in.getMessage();
+        if(chatsReceived != null) {
             String[] breakChats = chatsReceived.split("~");
             for (int i = 0; i < breakChats.length; i++) {
                 String currentChat = breakChats[i];
@@ -384,8 +382,8 @@ public class ChatClient extends JFrame implements ActionListener {
             socket.receive(packet);
             return new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
         }catch(IOException e){
-            System.out.println(e);
-            return null;
+            e.printStackTrace();
+	    return null;
         }
     }
     //Try to use this method as a pattern to send packets
@@ -398,7 +396,7 @@ public class ChatClient extends JFrame implements ActionListener {
             socket.send(packet);
             return "sucsess";
         }catch(IOException e){
-            System.out.println(e);
+            e.printStackTrace();
             return "failed";
         }
     }

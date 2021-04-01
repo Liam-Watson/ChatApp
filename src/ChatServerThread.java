@@ -256,6 +256,7 @@ public class ChatServerThread extends Thread {
 	if(history.equals("")){
 		return new NetworkMessage(-1, message.getUser(), "Failed", history);	
 	}else{
+		System.out.println("History:"+ history);
 		return new NetworkMessage(-1, message.getUser(), "Success", history);	
 	}
    	 
