@@ -28,7 +28,7 @@ public class ChatClient extends JFrame implements ActionListener {
     static ClientUpdatorThread clUpdator;
     static ClientMessageReceiverThread clReceiver;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException{
         clUpdator = new ClientUpdatorThread();
         clUpdator.setIncommingMessages(incomingMessages);
         clUpdator.setChatsList(chatsList);
@@ -93,13 +93,22 @@ public class ChatClient extends JFrame implements ActionListener {
                 } catch (UnknownHostException unknownHostException) {
                     unknownHostException.printStackTrace();
                 }
-                boolean success = getLoginConfirmation();
+                boolean success = false;
+                try {
+                    success = getLoginConfirmation();
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
                 if(success){
                     username = usrNmeIn.getText();
                     clUpdator.setUsername(username);
                     login.setVisible(false);
                     chatApp = new ChatClient();
-                    generateChatButtons();
+                    try {
+                        generateChatButtons();
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
                     chatApp.setVisible(true);
                 }else{
                     JOptionPane.showMessageDialog(null, "Login has failed please try again");
@@ -117,13 +126,22 @@ public class ChatClient extends JFrame implements ActionListener {
                 } catch (UnknownHostException unknownHostException) {
                     unknownHostException.printStackTrace();
                 }
-                boolean success = getLoginConfirmation();
+                boolean success = false;
+                try {
+                    success = getLoginConfirmation();
+                } catch (InterruptedException interruptedException) {
+                    interruptedException.printStackTrace();
+                }
                 if(success){
                     username = usrNmeIn.getText();
                     clUpdator.setUsername(username);
                     login.setVisible(false);
                     chatApp = new ChatClient();
-                    generateChatButtons();
+                    try {
+                        generateChatButtons();
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
                     chatApp.setVisible(true);
                 }else{
                     JOptionPane.showMessageDialog(null, "Signup has failed please try again");
@@ -243,7 +261,7 @@ public class ChatClient extends JFrame implements ActionListener {
             chatButtons.add(new JButton(currentChat.getChatName()));
         }
     }
-    public static void generateChatButtons(){
+    public static void generateChatButtons() throws InterruptedException {
         getChatHistory();
         populateChatButton();
         if(chatApp != null){
@@ -277,9 +295,18 @@ public class ChatClient extends JFrame implements ActionListener {
 
                             otherUser = JOptionPane.showInputDialog("Enter the name of the user you want to chat with");
                             createChat(username, otherUser, serverAddress);
-                            boolean success = getNewChatConfirmation();
+                            boolean success = false;
+                            try {
+                                success = getNewChatConfirmation();
+                            } catch (InterruptedException interruptedException) {
+                                interruptedException.printStackTrace();
+                            }
                             if(success){
-                                generateChatButtons();
+                                try {
+                                    generateChatButtons();
+                                } catch (InterruptedException interruptedException) {
+                                    interruptedException.printStackTrace();
+                                }
                             }else{
                                 JOptionPane.showMessageDialog(null, "Chat creation has failed, other user not found");
                             }
@@ -358,7 +385,7 @@ public class ChatClient extends JFrame implements ActionListener {
 		//DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
 		//socket.send(packet);
 	}
-	public static void getChatHistory() {
+	public static void getChatHistory() throws InterruptedException {
 	//send packet to request chats
 	    NetworkMessage request = new NetworkMessage(5, username, "request", username);
 	    sendData(request.toString());
@@ -376,12 +403,14 @@ public class ChatClient extends JFrame implements ActionListener {
                     }
                 }
             } else {
-                //resend packet
+                //resend packet after delay
                 //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
+                Thread.sleep(500);
                 sendData(request.toString());
             }
             if (response.getFunction() != 1) {
-                //resend packet
+                //resend packet after delay
+                Thread.sleep(500);
                 sendData(request.toString());
             }
         }
@@ -400,7 +429,7 @@ public class ChatClient extends JFrame implements ActionListener {
 
     }
 
-    public static boolean getLoginConfirmation(){
+    public static boolean getLoginConfirmation() throws InterruptedException {
 	    //get response from server if the login succeeded.
         //sorry about these default objects, Java just wont let me use a variable that has not been initialised.
         NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
@@ -417,10 +446,12 @@ public class ChatClient extends JFrame implements ActionListener {
             } else {
                 //resend packet
                 //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
+                Thread.sleep(500);
                 joinServer(usrNmeIn.getText(), passWdIn.getText(), LoginOrSignUp, serverAddress);
             }
             if (response.getFunction() != 2) {
                 //resend packet
+                Thread.sleep(500);
                 joinServer(usrNmeIn.getText(), passWdIn.getText(), LoginOrSignUp, serverAddress);
             }
         }
@@ -431,7 +462,7 @@ public class ChatClient extends JFrame implements ActionListener {
 		return false;
 	    }
     }
-    public static boolean getNewChatConfirmation(){
+    public static boolean getNewChatConfirmation() throws InterruptedException {
         //get response from server if the chat creation succeeded.
         NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
         while(response.getFunction() != 3) {
@@ -447,10 +478,12 @@ public class ChatClient extends JFrame implements ActionListener {
             } else {
                 //resend packet
                 //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
+                Thread.sleep(500);
                 createChat(username, otherUser, serverAddress);
             }
             if (response.getFunction() != 3) {
                 //resend packet
+                Thread.sleep(500);
                 createChat(username, otherUser, serverAddress);
             }
         }
