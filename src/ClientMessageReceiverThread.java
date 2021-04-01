@@ -30,7 +30,7 @@ public class ClientMessageReceiverThread extends Thread{
                 // receive request
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
-                ChatClient.incomingMessages.add(new NetworkMessage(new String(packet.getData(), 0, packet.getLength())));
+                incomingMessages.add(new NetworkMessage(new String(packet.getData(), 0, packet.getLength())));
             }catch(IOException e){
                 e.printStackTrace();
 
