@@ -236,7 +236,7 @@ public class ChatServerThread extends Thread {
 		return response;
 	}else{
 		System.out.println(message.getUser() + "\t" + chatUsers);
-		writeToFile("", "res/Chats/" + String.join(";",chatUsers) + ".txt");		
+		writeToFile("", "res/Chats/" + String.join(";",chatUsers));		
 		chats.add(newChat);
 		NetworkMessage response = new NetworkMessage(3, message.getUser(), "Succsess", "Chat " + String.join(";",chatUsers) + " created.");
 		System.out.println(response.toString());
