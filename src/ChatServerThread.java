@@ -279,7 +279,7 @@ public class ChatServerThread extends Thread {
 			writeToFile(m.toString(), temp.getChatName());
     		}
     	}
-    	return new NetworkMessage(1, message.getUser(), status, message.toString().getHash()); 
+    	return new NetworkMessage(1, message.getUser(), status,""+ message.toString().hashCode()); 
     }
     
     public void end(){
