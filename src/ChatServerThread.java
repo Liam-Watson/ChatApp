@@ -147,7 +147,7 @@ public class ChatServerThread extends Thread {
      */
     private NetworkMessage createUser(NetworkMessage message){
 	if(userExists(message)){
-		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Failed", "User " +message.getUser() + " already exists");
+		NetworkMessage response = new NetworkMessage(2, message.getUser(), "Failed", "User " +message.getUser() + " already exists");
 		System.out.println(response.toString());	
 		return response;
 	}else{
@@ -155,7 +155,7 @@ public class ChatServerThread extends Thread {
     		User user = new User(message.getUser(), message.getMessage());
 		users.add(user);
 		//TODO: we need to decide on a number for response messages, I have used -1
-		NetworkMessage response = new NetworkMessage(-1, message.getUser(), "Success", "User succsessfully created");
+		NetworkMessage response = new NetworkMessage(2, message.getUser(), "Success", "User succsessfully created");
 		System.out.println(response.toString());	
 	      	return response;	
 	}	
