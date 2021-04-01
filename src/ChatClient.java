@@ -495,6 +495,7 @@ public class ChatClient extends JFrame implements ActionListener {
 	    }
     }
 
+
     public void sendMessage(String user, String chat, String message){
         //send message to server to update chat
     }

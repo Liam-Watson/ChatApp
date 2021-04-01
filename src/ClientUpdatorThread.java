@@ -39,13 +39,13 @@ public class ClientUpdatorThread extends Thread{
                 NetworkMessage request = new NetworkMessage(2, username, "request", username);
 
                 //TODO Send This network message to the server, so that the server can send back any new messages
-                //TODO NOTE The incoming network message object must contain the string <ChatName>~<ChatMessage.toString()>~<ChatMessage... i.e chat name and messages with ~ as a delimiter
+                //TODO NOTE The incoming network message object must contain the string <ChatName>\n<ChatMessage.toString()>\n<ChatMessage... i.e chat name and messages with ~ as a delimiter
             }
 
             for (int i = 0; i < incomingMessages.size(); i++) {
                 if (incomingMessages.get(i).getFunction() == 0) {
                     String newMessagesBody = incomingMessages.get(i).getMessage();
-                    String[] newMessages = newMessagesBody.split("~");
+                    String[] newMessages = newMessagesBody.split("\n");
                     String ChatName = newMessages[0];
                     for (int j = 0; j < chatsList.size(); j++) {
                         if (chatsList.get(i).getChatName().equals(ChatName)) {
