@@ -7,6 +7,7 @@ public class ChatMessage{
     private String dateTime;
     private String content;
     private ArrayList<String> readBy;
+    private final String delimiter = "~";
     
     public ChatMessage(int i,String u, String dt, String c, String r){
         ID = i;
@@ -20,7 +21,7 @@ public class ChatMessage{
     }
     
     public ChatMessage(String a){
-        Scanner scLine = new Scanner(a).useDelimiter("#");
+        Scanner scLine = new Scanner(a).useDelimiter(delimiter);
         ID = Integer.parseInt(scLine.next());
         user = scLine.next();
         dateTime = scLine.next();
@@ -38,7 +39,7 @@ public class ChatMessage{
     
     public String toString(){
         String out = "";
-        out += ID+"#"+user+"#"+dateTime+"#"+content+"#";
+        out += ID+delimiter+user+delimiter+dateTime+delimiter+content+delimiter;
         for(String i: readBy) out+=i+";";
         return out;
     }
@@ -57,6 +58,8 @@ public class ChatMessage{
     public String getUser(){return user;}
     public String getDateTime(){return dateTime;}
     public String getContent(){return content;}
+    public ArrayList<String> getReadBy(){return readBy;}
+    public String getDelimiter(){return delimiter;}
     
     public void editMessage(String dt, String c){
         dateTime = dt;
