@@ -269,19 +269,17 @@ public class ChatServerThread extends Thread {
     private NetworkMessage recieveMessage(NetworkMessage message){
     	String[] parts = message.getMessage().split("/"); //TODO: Choose delimiter
     	String status = "Could not find chat";
-    	//Message format: DateTime / MessageContent / Recipents(seperated by ";")
-    	ChatMessage m = new ChatMessage(0, message.getUser(), parts[0], parts[1], "");
+    	//Message format: chatMessage.toString() / Recipents(seperated by ";")
+    	ChatMessage m = new ChatMessage(parts[0]);
+	Chat temp = new Chat((message.getUser()+";"+parts[1]).split(";"));
     	for(Chat c : chats){
-    		if(parts[2].equals(c.getChatName())){
-    			c.addMessage(m.toString());//TODO: Check who has read message
+    		if(temp.equals(c.getChatName())){
+    			c.addMessage(m.toString());
     			status = "Message Received";
+			writeToFile(m.toString(), temp.getChatName());
     		}
     	}
-    	if(status.equals("Message Received")){
-		writeToFile(m.toString(), parts[2]);
-    	} 
-    	//TODO: Call Send message method if users online
-    	return new NetworkMessage(-1, message.getUser(), status, ""); 
+    	return new NetworkMessage(1, message.getUser(), status, message.toString().getHash()); 
     }
     
     public void end(){
