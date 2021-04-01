@@ -9,7 +9,7 @@ public class NetworkMessage{
     
     private static int IDcounter = 0;
     
-    private final String delimiter = "#";
+    private final String delimiter = "`";
     
     public NetworkMessage(int f, String u, String s, String m){
         status =s;

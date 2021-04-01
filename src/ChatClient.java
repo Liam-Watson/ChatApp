@@ -394,7 +394,6 @@ public class ChatClient extends JFrame implements ActionListener {
         NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
         while(response.getFunction() != 1) {
             if (incomingMessages.size() > 0) {
-
                 for (int l = 0; l < incomingMessages.size(); l++) {
                     if (incomingMessages.get(l).getFunction() == 1) {
                         response = incomingMessages.get(l);
@@ -416,7 +415,6 @@ public class ChatClient extends JFrame implements ActionListener {
         }
 
 
-	    System.out.println(response.toString());
 	    String chatsReceived = response.getMessage();
 	    if(chatsReceived != null) {
 	        String[] breakChats = chatsReceived.split("~");

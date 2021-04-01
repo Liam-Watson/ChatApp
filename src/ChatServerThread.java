@@ -147,6 +147,8 @@ public class ChatServerThread extends Thread {
             // receive request
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
+            String received = new String(packet.getData(), 0, packet.getLength());
+	    System.out.println("Server received: \n --------------------------" + received + "\n -------------------------"); 
             return packet;
         }catch(IOException e){
             System.out.println(e);
@@ -161,7 +163,7 @@ public class ChatServerThread extends Thread {
             // send the response to the client at "address" and "port"
             InetAddress address = clientPacket.getAddress();
             int port = clientPacket.getPort();
-	    System.out.println("Server is sending: " + data);
+	    System.out.println("Server is sending: \n ____________________\n" + data + "\n_____________________");
             DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
             socket.send(packet);
             return "sucsess";

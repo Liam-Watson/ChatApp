@@ -7,7 +7,7 @@ public class ChatMessage{
     private String dateTime;
     private String content;
     private ArrayList<String> readBy;
-    private final String delimiter = "~";
+    private final String delimiter = "#";
     
     public ChatMessage(int i,String u, String dt, String c, String r){
         ID = i;
@@ -40,8 +40,10 @@ public class ChatMessage{
     public String toString(){
         String out = "";
         out += ID+delimiter+user+delimiter+dateTime+delimiter+content+delimiter;
-        for(String i: readBy) out+=i+";";
-        return out;
+       	if(readBy != null){ 
+		for(String i: readBy) out+=i+";";
+	}
+	return out;
     }
     
     public void read(String u){
