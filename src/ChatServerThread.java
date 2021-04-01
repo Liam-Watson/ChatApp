@@ -32,9 +32,11 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChatServerThread extends Thread {
-
+	//AtomicBoolean keepRunning = new AtomicBoolean(true);
+	private volatile boolean exit = false;
     protected DatagramSocket socket = null;
     protected BufferedReader in = null;
     protected boolean moreQuotes = true;
@@ -95,7 +97,8 @@ public class ChatServerThread extends Thread {
     
     public void run() {
         int i = 0;
-        while (i < 20000000) {
+
+        while (!exit) {
             DatagramPacket clientPacket = receiveData();
             //Get the string from the packet
             String received = new String(clientPacket.getData(), 0, clientPacket.getLength());
@@ -133,6 +136,7 @@ public class ChatServerThread extends Thread {
 	    }
             System.out.println(received);
             i++;
+
         }
         socket.close();
     }
@@ -280,7 +284,9 @@ public class ChatServerThread extends Thread {
     	return new NetworkMessage(-1, message.getUser(), status, ""); 
     }
     
-    
+    public void end(){
+    	exit = true;
+	}
     
 /*
  *    public NetworkMessage(int f, String u, String s, String m){
