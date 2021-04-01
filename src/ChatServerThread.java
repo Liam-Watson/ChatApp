@@ -235,6 +235,12 @@ public class ChatServerThread extends Thread {
 		//Error chat already exists
 		return response;
 	}else{
+		for(int i=0;i<chatUsers.length;i++){
+			if(!users.contains(new User(chatUsers[i],""))){
+				System.out.println("Chat not created. User: "+chatUsers[i]+" not found");
+				return new NetworkMessage(3,message.getUser(),"Failed: Chat not created. User: "+chatUsers[i]+" not found","");	
+			}
+		}
 		System.out.println(message.getUser() + "\t" + chatUsers);
 		writeToFile("", "res/Chats/" + String.join(";",chatUsers));		
 		chats.add(newChat);
