@@ -196,7 +196,23 @@ public class ChatClient extends JFrame implements ActionListener {
         input.add(message, BorderLayout.CENTER);
 
         JButton send = new JButton("Send");
-        send.addActionListener(this);
+        send.addActionListener(
+		new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendMessage(username, openChat[0] ,"1" + "#" +username + "#" +"20/20/2021" +"#" + message.getText() + "#");
+		        String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
+                Chat currentChat = new Chat(defaultChats);
+                for (int i = 0; i < chatsList.size(); i++) {
+                    if(chatsList.get(i).getChatName().equals(openChat[0])){
+                        currentChat = chatsList.get(i);
+                        currentChat.addMessage("1" + "#" +username + "#" +"20/20/2021" +"#" + message.getText() + "#");
+                    }
+                }
+                chatContent.setText(currentChat.printMessages());
+		message.setText("");
+	    }
+        });
         send.setSize(100,500);
         input.add(send, BorderLayout.EAST);
 
@@ -463,7 +479,9 @@ public class ChatClient extends JFrame implements ActionListener {
 
 
     public void sendMessage(String user, String chat, String message){
-        //send message to server to update chat
+	NetworkMessage packet = new NetworkMessage(1, user, "request", chat + "\n" + message);		
+    	sendData(packet.toString());
+	//TODO: Reciept validation
     }
 
     //Try to use this method as a pattern to recieve packets
