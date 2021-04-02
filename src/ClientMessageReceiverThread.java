@@ -33,7 +33,8 @@ public class ClientMessageReceiverThread extends Thread{
                 // receive request
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
-                incomingMessages.add(new NetworkMessage(new String(packet.getData(), 0, packet.getLength())));
+		System.out.println("Message we recieved: " + (new String(packet.getData(), 0, packet.getLength())));
+		incomingMessages.add(new NetworkMessage(new String(packet.getData(), 0, packet.getLength())));
             } catch (SocketException e){
                 System.out.println("socket closed");
             }catch(IOException e){

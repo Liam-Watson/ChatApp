@@ -55,9 +55,9 @@ public class ClientUpdatorThread extends Thread{
             for (int i = 0; i < chatsList.size(); i++) {
                 String chatName = chatsList.get(i).getChatName();
                 ChatMessage mostRecentMessage = chatsList.get(i).getMostRecentMessage();
-                String updateChatRequest = "";
+                String updateChatRequest = "^";
 		if(mostRecentMessage != null){
-			updateChatRequest = chatName + mostRecentMessage.toString();
+			updateChatRequest = chatName + "\n" + mostRecentMessage.toString();
 		}
 		//based on the doc I assume that a the sendMessage function (2) is what we will use for this
                 //message body will be chatname <newline> most recent chat message (in String form)
@@ -83,16 +83,19 @@ public class ClientUpdatorThread extends Thread{
 
             for (int i = 0; i < incomingMessages.size(); i++) {
                 if (incomingMessages.get(i).getFunction() == 0) {
-                    String newMessagesBody = incomingMessages.get(i).getMessage();
-                    String[] newMessages = newMessagesBody.split("\n");
-                    String ChatName = newMessages[0];
-                    for (int j = 0; j < chatsList.size(); j++) {
-                        if (chatsList.get(i).getChatName().equals(ChatName)) {
-                            for (int k = 1; k < newMessages.length; k++) {
-                                chatsList.get(i).addMessage(newMessages[k]);
+		    if(!incomingMessages.get(i).getMessage().equals("^")){
+                    	String newMessagesBody = incomingMessages.get(i).getMessage();
+		    	System.out.println("MESSAGE BODY: " + incomingMessages.get(i).toString());
+                    	String[] newMessages = newMessagesBody.split("\n");
+                    	String ChatName = newMessages[0];
+                    	for (int j = 0; j < chatsList.size(); j++) {
+                            if (chatsList.get(j).getChatName().equals(ChatName)) {
+                            	for (int k = 1; k < newMessages.length; k++) {
+                                	chatsList.get(j).addMessage(newMessages[k]);
+                            	}
                             }
-                        }
-                    }
+                    	}
+		    }
                     incomingMessages.remove(i);
 
 

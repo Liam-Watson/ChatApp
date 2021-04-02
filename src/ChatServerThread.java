@@ -81,6 +81,7 @@ public class ChatServerThread extends Thread {
 						sendData(recieveMessage(message).toString(), clientPacket);
 						break;
 					case 2:
+						sendData(sendMessage(message).toString(), clientPacket);
 						//sendMessage
 						break;
 					case 3:
@@ -120,7 +121,7 @@ public class ChatServerThread extends Thread {
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
             String received = new String(packet.getData(), 0, packet.getLength());
-	    	System.out.println("Server received: \n --------------------------" + received + "\n -------------------------");
+	    	System.out.println("Server received: \n -------------------------- + \n" + received + "\n -------------------------");
             return packet;
         } catch (SocketException e){
         	System.out.println("socket closed");
@@ -258,12 +259,14 @@ public class ChatServerThread extends Thread {
     	//Message format: chatMessage.toString() / Recipents(seperated by ";")
     	ChatMessage m = new ChatMessage(parts[1]);
 	Chat temp = new Chat((message.getUser()+";"+parts[1]).split(";"));
+	System.out.println("CHAT FORM: " + temp.toString());
     	for(Chat c : chats){
-    		if(temp.getChatName().equals(c.getChatName())){
+		if(c.getChatName().equals(parts[0])){
+    		//if(temp.getChatName().equals(c.getChatName())){
     			c.addMessage(m.toString());
     			status = "Message Received";
-			writeToFile(m.toString(), temp.getChatName());
-			
+			writeToFile(parts[1], "res/Chats/" + parts[0] );
+			System.out.println("Message get's added to chat and written " + m.toString());
     		}
     	}
     	return new NetworkMessage(1, message.getUser(), status,""+ message.toString().hashCode()); 
@@ -283,5 +286,23 @@ public class ChatServerThread extends Thread {
  *       function = f;
  *   }
  */
+    public NetworkMessage sendMessage(NetworkMessage message){
+	    //Note Here we are using an & to delimit chat name and chat message. The same is used client side.
+	    //There is also a problem where there have been no message changes and for the Networkmessage contructor we need a character to send. I have used ^
+	if(message.getMessage().equals("^")){
+		return new NetworkMessage(0, message.getUser(), "succsess", "^"); //TODO: Handle case where chat is empty
+	}else{
+		Chat tmpChat = new Chat(message.getMessage());
+		if(chats.contains(tmpChat)){
+			
+			Chat actualChat = chats.get(chats.indexOf(tmpChat));
+			//String messages = actualChat.getChatName() + "\n" +actualChat.printMessages();
+			String messages = actualChat.toString();
+			return new NetworkMessage(0, message.getUser(), "succsess", messages);
+		}else{
+			return new NetworkMessage(0, message.getUser(), "failed", "^");
+		}
+	}
+    }
 
 }
