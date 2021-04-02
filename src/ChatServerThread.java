@@ -20,6 +20,7 @@ public class ChatServerThread extends Thread {
     public ChatServerThread(String name) throws IOException {
         super(name);
         socket = new DatagramSocket(4445);
+
         
         initUsers();
         initChats();
@@ -68,46 +69,48 @@ public class ChatServerThread extends Thread {
         int i = 0;
 
         while (!exit) {
-            DatagramPacket clientPacket = receiveData();
-            //Get the string from the packet
-            String received = new String(clientPacket.getData(), 0, clientPacket.getLength());
-	    //Parse string message to message object
-	    NetworkMessage message = new NetworkMessage(received);
-	    switch(message.getFunction()){
-		case 1:
-			//recieveMessage
-			sendData(recieveMessage(message).toString(), clientPacket);
-			break;
-		case 2:
-			//sendMessage
-			break;
-		case 3:
-			sendData(createUser(message).toString(), clientPacket);
-			//createUser
-			break;
-		case 4:
-			sendData(userJoined(message).toString(), clientPacket);
-			//UserJoined
-			break;
-		case 5:
-			sendData(sendMessageHistory(message).toString(), clientPacket);
-			//Send history
-			break;
-		case 6:
-			sendData(createChat(message).toString(), clientPacket);
-			//createChat
-			break;
-		default:
-			//sendData(generalError(), clientPacket);
-			//TODO: This is the error case, we should handle this by sending back a failed message to client
-			break;
+			DatagramPacket clientPacket = receiveData();
+			if (clientPacket != null) {
+				//Get the string from the packet
+				String received = new String(clientPacket.getData(), 0, clientPacket.getLength());
+				//Parse string message to message object
+				NetworkMessage message = new NetworkMessage(received);
+				switch (message.getFunction()) {
+					case 1:
+						//recieveMessage
+						sendData(recieveMessage(message).toString(), clientPacket);
+						break;
+					case 2:
+						//sendMessage
+						break;
+					case 3:
+						sendData(createUser(message).toString(), clientPacket);
+						//createUser
+						break;
+					case 4:
+						sendData(userJoined(message).toString(), clientPacket);
+						//UserJoined
+						break;
+					case 5:
+						sendData(sendMessageHistory(message).toString(), clientPacket);
+						//Send history
+						break;
+					case 6:
+						sendData(createChat(message).toString(), clientPacket);
+						//createChat
+						break;
+					default:
+						//sendData(generalError(), clientPacket);
+						//TODO: This is the error case, we should handle this by sending back a failed message to client
+						break;
 
-	    }
-            System.out.println(received);
-            i++;
+				}
+				System.out.println(received);
+				i++;
 
-        }
-        socket.close();
+			}
+		}
+        //socket.close();
     }
 
     private DatagramPacket receiveData() {
@@ -117,13 +120,16 @@ public class ChatServerThread extends Thread {
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             socket.receive(packet);
             String received = new String(packet.getData(), 0, packet.getLength());
-	    System.out.println("Server received: \n --------------------------" + received + "\n -------------------------"); 
+	    	System.out.println("Server received: \n --------------------------" + received + "\n -------------------------");
             return packet;
-        }catch(IOException e){
+        } catch (SocketException e){
+        	System.out.println("socket closed");
+        	return null;
+		} catch(IOException e){
             System.out.println(e);
             return null;
         }
-    }
+	}
 
     private String sendData(String data, DatagramPacket clientPacket) {
         try {
@@ -261,6 +267,7 @@ public class ChatServerThread extends Thread {
     
     public void end(){
     	exit = true;
+    	socket.close();
 	}
     
 /*

@@ -1,12 +1,14 @@
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientUpdatorThread extends Thread{
     AtomicBoolean keepRunning = new AtomicBoolean(true);
-    ArrayList<NetworkMessage> incomingMessages = new ArrayList<NetworkMessage>();
-    ArrayList<Chat> chatsList = new ArrayList<Chat>();
+    List<NetworkMessage> incomingMessages = Collections.synchronizedList(new ArrayList<NetworkMessage>());
+    List<Chat> chatsList = Collections.synchronizedList(new ArrayList<Chat>());
     String username = "";
 
 
@@ -18,10 +20,10 @@ public class ClientUpdatorThread extends Thread{
         super(name);
 
     }
-    public void setIncommingMessages(ArrayList<NetworkMessage> in){
+    public void setIncommingMessages(List<NetworkMessage> in){
         incomingMessages = in;
     }
-    public void setChatsList(ArrayList<Chat> in){
+    public void setChatsList(List<Chat> in){
         chatsList = in;
     }
     public void setUsername(String in){

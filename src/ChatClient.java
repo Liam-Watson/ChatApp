@@ -7,12 +7,13 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.net.*;
 import java.util.*;
+import java.util.List;
 
 public class ChatClient extends JFrame implements ActionListener {
     static DatagramSocket socket; //This is for sending
-    static ArrayList<Chat> chatsList = new ArrayList<Chat>();
+    static List<Chat> chatsList = Collections.synchronizedList(new ArrayList<Chat>());
     static ArrayList<JButton> chatButtons = new ArrayList<JButton>();
-    public static ArrayList<NetworkMessage> incomingMessages = new ArrayList<NetworkMessage>();
+    public static List<NetworkMessage> incomingMessages = Collections.synchronizedList(new ArrayList<NetworkMessage>());
     static JTextField message = new JTextField();
     static JTextArea chatContent = new JTextArea();
     static ChatClient chatApp;

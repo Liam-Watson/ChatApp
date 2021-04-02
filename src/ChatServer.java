@@ -11,8 +11,7 @@ public class ChatServer {
             in = input.nextLine();
             input.close();
         }
-        System.out.println("set var to false");
-        //chatserver.keepRunning = false;
+
         chatserver.end();
     }
 }
