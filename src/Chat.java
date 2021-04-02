@@ -38,6 +38,9 @@ public class Chat{
         return outMessages;
     }
     public ChatMessage getMostRecentMessage(){
+	if(messages.size() == 0){
+		return null; //TODO: Decide on a way to deal with no messages  
+	}
         return messages.get(messages.size()-1);
     }
     public boolean equals(Object other){

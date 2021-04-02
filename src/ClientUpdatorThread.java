@@ -55,8 +55,11 @@ public class ClientUpdatorThread extends Thread{
             for (int i = 0; i < chatsList.size(); i++) {
                 String chatName = chatsList.get(i).getChatName();
                 ChatMessage mostRecentMessage = chatsList.get(i).getMostRecentMessage();
-                String updateChatRequest = chatName + mostRecentMessage.toString();
-                //based on the doc I assume that a the sendMessage function (2) is what we will use for this
+                String updateChatRequest = "";
+		if(mostRecentMessage != null){
+			updateChatRequest = chatName + mostRecentMessage.toString();
+		}
+		//based on the doc I assume that a the sendMessage function (2) is what we will use for this
                 //message body will be chatname <newline> most recent chat message (in String form)
                 NetworkMessage request = new NetworkMessage(2, username, "request", updateChatRequest);
 
