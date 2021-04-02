@@ -13,8 +13,7 @@ public class Chat{
     public Chat(String chat){
         messages = new ArrayList<ChatMessage>();
 	String [] lines = chat.split("\n");
-	String [] users = lines[0].split(";");
-	
+	users = lines[0].split(";");
 	for(int i = 1; i < lines.length; i++){
 		messages.add(new ChatMessage(lines[i]));
 	}
