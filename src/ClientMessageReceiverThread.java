@@ -29,7 +29,7 @@ public class ClientMessageReceiverThread extends Thread{
     public void run(){
         while(keepRunning.get()){
             try {
-                byte[] buf = new byte[256];
+                byte[] buf = new byte[16384]; //TODO: This limits the size of messages we recieve. I byte is 1 character in a string. I have set it to 2^14 for now. 
                 // receive request
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
