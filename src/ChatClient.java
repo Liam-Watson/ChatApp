@@ -16,6 +16,7 @@ public class ChatClient extends JFrame implements ActionListener {
     public static List<NetworkMessage> incomingMessages = Collections.synchronizedList(new ArrayList<NetworkMessage>());
     static JTextField message = new JTextField();
     static JTextArea chatContent = new JTextArea();
+    static JScrollPane scrollPane = new JScrollPane(chatContent);
     static ChatClient chatApp;
     static JTextField usrNmeIn;
     static JTextField passWdIn;
@@ -185,7 +186,7 @@ public class ChatClient extends JFrame implements ActionListener {
         chatContent.setBorder(new EmptyBorder(30, 30, 30, 30) );
         chatContent.setEditable(false);
 
-        chat.add(chatContent, BorderLayout.CENTER);
+        chat.add(scrollPane, BorderLayout.CENTER);
 
         JPanel input = new JPanel();
         input.setLayout(new BorderLayout());
