@@ -21,7 +21,7 @@ public class ChatClient extends JFrame implements ActionListener {
     static JTextField passWdIn;
     static JFrame login;
     static String username;
-    static String openChat;
+    static String []openChat = new String[1];
     static InetAddress serverAddress;
     static String LoginOrSignUp;
     static String otherUser;
@@ -33,6 +33,8 @@ public class ChatClient extends JFrame implements ActionListener {
         clUpdator = new ClientUpdatorThread();
         clUpdator.setIncommingMessages(incomingMessages);
         clUpdator.setChatsList(chatsList);
+        clUpdator.setCurrentChat(openChat);
+        clUpdator.setOutputArea(chatContent);
 
         serverAddress = InetAddress.getByName(args[0]);
         socket = new DatagramSocket();
@@ -238,7 +240,7 @@ public class ChatClient extends JFrame implements ActionListener {
             }
         }
         chatButtons.add(new JButton("test"));
-        openChat = "test";
+        openChat[0] = "test";
         chatButtons.add(new JButton("+"));
 
         JPanel chats = new JPanel();
@@ -274,7 +276,7 @@ public class ChatClient extends JFrame implements ActionListener {
                             otherUser = "";
                             break;
                         default:
-                            openChat = action;
+                            openChat[0] = action;
                             break;
                     }
 		            showMessages();
@@ -291,7 +293,7 @@ public class ChatClient extends JFrame implements ActionListener {
         String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
         Chat currentChat = new Chat(defaultChats);
         for (int i = 0; i < chatsList.size(); i++) {
-            if(chatsList.get(i).getChatName().equals(openChat)){
+            if(chatsList.get(i).getChatName().equals(openChat[0])){
                 currentChat = chatsList.get(i);
             }
         }
@@ -303,11 +305,11 @@ public class ChatClient extends JFrame implements ActionListener {
         String action = e.getActionCommand();
         switch (action){
             case "send":
-                sendMessage(username, openChat ,message.getText());
-		String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
+                sendMessage(username, openChat[0] ,message.getText());
+		        String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
                 Chat currentChat = new Chat(defaultChats);
                 for (int i = 0; i < chatsList.size(); i++) {
-                    if(chatsList.get(i).getChatName().equals(openChat)){
+                    if(chatsList.get(i).getChatName().equals(openChat[0])){
                         currentChat = chatsList.get(i);
                         currentChat.addMessage("1#" + username + "#" + message.getText() + "#");
                     }

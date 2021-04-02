@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ public class ClientUpdatorThread extends Thread{
     List<NetworkMessage> incomingMessages = Collections.synchronizedList(new ArrayList<NetworkMessage>());
     List<Chat> chatsList = Collections.synchronizedList(new ArrayList<Chat>());
     String username = "";
+    String [] openChat = new String[1];
+    JTextArea chatContent = new JTextArea();
 
 
     public ClientUpdatorThread() throws IOException {
@@ -26,8 +29,14 @@ public class ClientUpdatorThread extends Thread{
     public void setChatsList(List<Chat> in){
         chatsList = in;
     }
+    public void setOutputArea(JTextArea in){
+        chatContent = in;
+    }
     public void setUsername(String in){
         username = in;
+    }
+    public void setCurrentChat(String [] in) {
+        openChat = in;
     }
 
 
@@ -61,6 +70,14 @@ public class ClientUpdatorThread extends Thread{
 
                 }
             }
+
+            for (int i = 0; i < chatsList.size(); i++) {
+                if(chatsList.get(i).getChatName().equals(openChat[0])){
+                    chatContent.setText(chatsList.get(i).printMessages());
+
+                }
+            }
+
             //ChatClient.showMessages();
             //Thread sleeps for 2 seconds, i.e chats will be updated every 2 seconds
             try {
@@ -71,4 +88,6 @@ public class ClientUpdatorThread extends Thread{
 
         }
     }
+
+
 }
