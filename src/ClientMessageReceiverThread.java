@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,11 +34,17 @@ public class ClientMessageReceiverThread extends Thread{
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
                 incomingMessages.add(new NetworkMessage(new String(packet.getData(), 0, packet.getLength())));
+            } catch (SocketException e){
+                System.out.println("socket closed");
             }catch(IOException e){
                 e.printStackTrace();
 
             }
         }
 
+    }
+    public void end(){
+        keepRunning.set(false);
+        socket.close();
     }
 }

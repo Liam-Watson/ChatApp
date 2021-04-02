@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +15,8 @@ public class ClientUpdatorThread extends Thread{
     String username = "";
     String [] openChat = new String[1];
     JTextArea chatContent = new JTextArea();
+    DatagramSocket socket = new DatagramSocket();
+    InetAddress serverAddress;
 
 
     public ClientUpdatorThread() throws IOException {
@@ -38,6 +42,12 @@ public class ClientUpdatorThread extends Thread{
     public void setCurrentChat(String [] in) {
         openChat = in;
     }
+    public void setSocket(DatagramSocket in){
+        socket = in;
+    }
+    public void setServerAddress(InetAddress in){
+        serverAddress = in;
+    }
 
 
     public void run(){
@@ -47,10 +57,25 @@ public class ClientUpdatorThread extends Thread{
                 ChatMessage mostRecentMessage = chatsList.get(i).getMostRecentMessage();
                 String updateChatRequest = chatName + mostRecentMessage.toString();
                 //based on the doc I assume that a the sendMessage function (2) is what we will use for this
-                NetworkMessage request = new NetworkMessage(2, username, "request", username);
+                //message body will be chatname <newline> most recent chat message (in String form)
+                NetworkMessage request = new NetworkMessage(2, username, "request", updateChatRequest);
 
-                //TODO Send This network message to the server, so that the server can send back any new messages
-                //TODO NOTE The incoming network message object must contain the string <ChatName>\n<ChatMessage.toString()>\n<ChatMessage... i.e chat name and messages with ~ as a delimiter
+                try {
+                    byte[] buf = new byte[256];
+                    buf = request.toString().getBytes();
+                    // send the response to the client at "address" and "port"
+                    DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddress, 4445);
+                    socket.send(packet);
+
+                }catch(IOException e){
+                    e.printStackTrace();
+
+                }
+
+                //TODO NOTE Incoming network message must have function value of 0
+                //TODO NOTE The incoming network message object must contain the string <ChatName>\n<ChatMessage.toString()>\n<ChatMessage... i.e chat name and messages with \n as a delimiter
+
+
             }
 
             for (int i = 0; i < incomingMessages.size(); i++) {

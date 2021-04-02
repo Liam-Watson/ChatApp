@@ -30,14 +30,17 @@ public class ChatClient extends JFrame implements ActionListener {
     static ClientMessageReceiverThread clReceiver;
 
     public static void main(String[] args) throws IOException{
+        serverAddress = InetAddress.getByName(args[0]);
+        socket = new DatagramSocket();
+
         clUpdator = new ClientUpdatorThread();
         clUpdator.setIncommingMessages(incomingMessages);
         clUpdator.setChatsList(chatsList);
         clUpdator.setCurrentChat(openChat);
         clUpdator.setOutputArea(chatContent);
+        clUpdator.setSocket(socket);
+        clUpdator.setServerAddress(serverAddress);
 
-        serverAddress = InetAddress.getByName(args[0]);
-        socket = new DatagramSocket();
 
         clReceiver = new ClientMessageReceiverThread();
         clReceiver.setSocket(socket);
@@ -58,8 +61,8 @@ public class ChatClient extends JFrame implements ActionListener {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
                 clUpdator.keepRunning.set(false);
-                clReceiver.keepRunning.set(false);
-
+                clReceiver.end();
+                //System.out.println("window closed");
                 e.getWindow().dispose();
 
             }
@@ -206,8 +209,8 @@ public class ChatClient extends JFrame implements ActionListener {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
                 clUpdator.keepRunning.set(false);
-                clReceiver.keepRunning.set(false);
-
+                clReceiver.end();
+                //System.out.println("window closed");
                 e.getWindow().dispose();
 
             }
@@ -353,7 +356,7 @@ public class ChatClient extends JFrame implements ActionListener {
 	    NetworkMessage request = new NetworkMessage(5, username, "request", username);
 	    sendData(request.toString());
         chatsList.clear();
-
+        Thread.sleep(1000);
         NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
         while(response.getFunction() != 1) {
             if (incomingMessages.size() > 0) {
@@ -393,6 +396,7 @@ public class ChatClient extends JFrame implements ActionListener {
     public static boolean getLoginConfirmation() throws InterruptedException {
 	    //get response from server if the login succeeded.
         //sorry about these default objects, Java just wont let me use a variable that has not been initialised.
+        Thread.sleep(1000);
         NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
         while(response.getFunction() != 2) {
             if (incomingMessages.size() > 0) {
@@ -425,6 +429,7 @@ public class ChatClient extends JFrame implements ActionListener {
     }
     public static boolean getNewChatConfirmation() throws InterruptedException {
         //get response from server if the chat creation succeeded.
+        Thread.sleep(1000);
         NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
         while(response.getFunction() != 3) {
             if (incomingMessages.size() > 0) {
