@@ -52,4 +52,7 @@ public class User {
         password = newPass;
         return true;
     }
+    public String toString(){
+	return username + "*" + password;
+    }
 }

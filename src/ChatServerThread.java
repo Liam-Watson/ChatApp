@@ -185,19 +185,22 @@ public class ChatServerThread extends Thread {
 		e.printStackTrace();
 	}
     }
+
+    private boolean checkUserPw(NetworkMessage message){
+    	User user = new User(message.getUser(), message.getMessage());
+	return users.get(users.indexOf(user)).authenticate(message.getUser(), message.getMessage());		
+    }
    /*
     *This method is to be run when we get a user login request
     *
     */ 
     private NetworkMessage userJoined(NetworkMessage message){
-	if(userExists(message)){
+	if(userExists(message) && checkUserPw(message)){
 		NetworkMessage response = new NetworkMessage(2, message.getUser(), "Success", "User " +message.getUser() + " logged in");
-		System.out.println(response.toString());	
 		return response;
 	}else{
 		//TODO: we need to decide on a number for response messages, I have used -1 NBNBNB. Maybe we should match the number with the type of request?
 		NetworkMessage response = new NetworkMessage(2, message.getUser(), "Failed", "User" + message.getUser() + " does not exist. Try check your spelling or create a new user. ");
-		System.out.println(response.toString());	
 	      	return response;	
 	}	
 		
