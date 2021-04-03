@@ -8,6 +8,8 @@ import javax.swing.border.EmptyBorder;
 import java.net.*;
 import java.util.*;
 import java.util.List;
+import java.time.LocalDateTime; // Import the LocalDateTime class
+import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 
 public class ChatClient extends JFrame implements ActionListener {
     static DatagramSocket socket; //This is for sending
@@ -201,13 +203,15 @@ public class ChatClient extends JFrame implements ActionListener {
 		new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sendMessage(username, openChat[0] ,"1" + "#" +username + "#" +"20/20/2021" +"#" + message.getText() + "#");
+		LocalDateTime dateTime = LocalDateTime.now();
+		DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm:ss");
+                sendMessage(username, openChat[0] ,"1" + "#" +username + "#" + dateTime.format(dateTimeFormat) +"#" + message.getText() + "#");
 		        String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
                 Chat currentChat = new Chat(defaultChats);
                 for (int i = 0; i < chatsList.size(); i++) {
                     if(chatsList.get(i).getChatName().equals(openChat[0])){
                         currentChat = chatsList.get(i);
-                        currentChat.addMessage("1" + "#" +username + "#" +"20/20/2021" +"#" + message.getText() + "#");
+                        currentChat.addMessage("1" + "#" +username + "#" +dateTime.format(dateTimeFormat) +"#" + message.getText() + "#");
                     }
                 }
                 chatContent.setText(currentChat.printMessages());
@@ -227,7 +231,6 @@ public class ChatClient extends JFrame implements ActionListener {
             public void windowClosing(java.awt.event.WindowEvent e) {
                 clUpdator.keepRunning.set(false);
                 clReceiver.end();
-                //System.out.println("window closed");
                 e.getWindow().dispose();
 
             }
@@ -437,7 +440,6 @@ public class ChatClient extends JFrame implements ActionListener {
                 joinServer(usrNmeIn.getText(), passWdIn.getText(), LoginOrSignUp, serverAddress);
             }
         }
-        System.out.println(response.toString());
 	    if(response.getStatus().equals("Success")){
 		return true;
 	    }else{
@@ -470,7 +472,6 @@ public class ChatClient extends JFrame implements ActionListener {
                 createChat(username, otherUser, serverAddress);
             }
         }
-	    System.out.println(response.toString());
 	    if(response.getStatus().equals("Success")){
 		    return true;
 	    }else{

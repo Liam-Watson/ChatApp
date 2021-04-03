@@ -20,7 +20,6 @@ public class Chat{
     }
     public void initChat(Scanner scan){
         while(scan.hasNext()){
-	//	System.out.println(scan.nextLine());
             messages.add(new ChatMessage(scan.nextLine()));
         }
     }
@@ -68,6 +67,22 @@ public class Chat{
     }
     public String[] getUsers(){
 	return users;
+    }
+
+    public String getMessagesSince(ChatMessage message){
+	String msgs = this.getChatName() + "\n";
+	    if(messages.contains(message)){
+		boolean flag = false;
+		for(ChatMessage m : messages){
+			if(flag){
+				msgs += m.toString();		
+			}
+			if(!flag && m.equals(message)){
+				flag = true;
+			}
+		}
+	}
+	return msgs;
     }
     
     public boolean userPartOfChat(String userName){

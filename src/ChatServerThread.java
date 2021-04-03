@@ -106,7 +106,6 @@ public class ChatServerThread extends Thread {
 						break;
 
 				}
-				System.out.println(received);
 				i++;
 
 			}
@@ -155,7 +154,6 @@ public class ChatServerThread extends Thread {
     private NetworkMessage createUser(NetworkMessage message){
 	if(userExists(message)){
 		NetworkMessage response = new NetworkMessage(2, message.getUser(), "Failed", "User " +message.getUser() + " already exists");
-		System.out.println(response.toString());	
 		return response;
 	}else{
 		writeToFile(message.getUser() + "#" + message.getMessage() + "#", "res/Users.txt");
@@ -163,12 +161,10 @@ public class ChatServerThread extends Thread {
 		users.add(user);
 		//TODO: we need to decide on a number for response messages, I have used -1
 		NetworkMessage response = new NetworkMessage(2, message.getUser(), "Success", "User succsessfully created");
-		System.out.println(response.toString());	
 	      	return response;	
 	}	
     }
     private boolean userExists(NetworkMessage message){
-	System.out.println(message.getUser() + "\t" + message.getMessage());
     	User user = new User(message.getUser(), message.getMessage());
 	if(users.contains(user)){
 	       	return true;
@@ -212,21 +208,17 @@ public class ChatServerThread extends Thread {
 	Chat newChat = new Chat(chatUsers); //Now takes in array 
 	if(chats.contains(newChat)){
 		NetworkMessage response = new NetworkMessage(3, message.getUser(), "Failed", "Chat " + String.join(";",chatUsers) + " already exists.");
-		System.out.println(response.toString());
 		//Error chat already exists
 		return response;
 	}else{
 		for(int i=0;i<chatUsers.length;i++){
 			if(!users.contains(new User(chatUsers[i],""))){
-				System.out.println("Chat not created. User: "+chatUsers[i]+" not found");
 				return new NetworkMessage(3,message.getUser(),"Failed: Chat not created. User: "+chatUsers[i]+" not found","");	
 			}
 		}
-		System.out.println(message.getUser() + "\t" + chatUsers);
 		writeToFile("", "res/Chats/" + String.join(";",chatUsers));		
 		chats.add(newChat);
 		NetworkMessage response = new NetworkMessage(3, message.getUser(), "Succsess", "Chat " + String.join(";",chatUsers) + " created.");
-		System.out.println(response.toString());
 		return response;
 	}
     }
@@ -247,7 +239,6 @@ public class ChatServerThread extends Thread {
 	if(history.equals("")){
 		return new NetworkMessage(1, message.getUser(), "Failed", history);
 	}else{
-		System.out.println("History:"+ history);
 		return new NetworkMessage(1, message.getUser(), "Success", history);
 	}
    	 
@@ -259,14 +250,12 @@ public class ChatServerThread extends Thread {
     	//Message format: chatMessage.toString() / Recipents(seperated by ";")
     	ChatMessage m = new ChatMessage(parts[1]);
 	Chat temp = new Chat((message.getUser()+";"+parts[1]).split(";"));
-	System.out.println("CHAT FORM: " + temp.toString());
     	for(Chat c : chats){
 		if(c.getChatName().equals(parts[0])){
     		//if(temp.getChatName().equals(c.getChatName())){
     			c.addMessage(m.toString());
     			status = "Message Received";
 			writeToFile(parts[1], "res/Chats/" + parts[0] );
-			System.out.println("Message get's added to chat and written " + m.toString());
     		}
     	}
     	return new NetworkMessage(1, message.getUser(), status,""+ message.toString().hashCode()); 
@@ -289,18 +278,28 @@ public class ChatServerThread extends Thread {
     public NetworkMessage sendMessage(NetworkMessage message){
 	    //Note Here we are using an & to delimit chat name and chat message. The same is used client side.
 	    //There is also a problem where there have been no message changes and for the Networkmessage contructor we need a character to send. I have used ^
-	if(message.getMessage().equals("^")){
-		return new NetworkMessage(0, message.getUser(), "succsess", "^"); //TODO: Handle case where chat is empty
-	}else{
-		Chat tmpChat = new Chat(message.getMessage());
+        if(message.getMessage().equals("^")){
+	    Chat tmpChat = new Chat(message.getMessage());
 		if(chats.contains(tmpChat)){
-			
 			Chat actualChat = chats.get(chats.indexOf(tmpChat));
-			//String messages = actualChat.getChatName() + "\n" +actualChat.printMessages();
-			String messages = actualChat.toString();
+	    		return new NetworkMessage(0, message.getUser(), "succsess", actualChat.toString()); //TODO: Handle case where chat is empty
+		}else{
+			return new NetworkMessage(0, message.getUser(), "failed1", "^");
+
+		}
+	}else{
+	    Chat tmpChat = new Chat(message.getMessage());
+		if(chats.contains(tmpChat)){
+			Chat actualChat = chats.get(chats.indexOf(tmpChat));
+			ChatMessage msg = new ChatMessage(message.getMessage().split("\n")[1]);
+			String messages = actualChat.getMessagesSince(msg);
+			if(messages.equals("")){
+				return new NetworkMessage(0, message.getUser(), "failed2", "^");
+			}
+					
 			return new NetworkMessage(0, message.getUser(), "succsess", messages);
 		}else{
-			return new NetworkMessage(0, message.getUser(), "failed", "^");
+			return new NetworkMessage(0, message.getUser(), "failed3", "^");
 		}
 	}
     }

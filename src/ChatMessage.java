@@ -35,7 +35,10 @@ public class ChatMessage{
         scLine.close();
     }
     
-    public boolean equals(ChatMessage o){ return ID == o.getID();}
+    public boolean equals(Object o){
+	    ChatMessage other = (ChatMessage)o;
+	    return (ID + user + dateTime + content).equals(other.getID() + other.getUser() + other.getDateTime() + content);
+    }
     
     public String toString(){
         String out = "";
