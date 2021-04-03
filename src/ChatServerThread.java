@@ -20,7 +20,9 @@ public class ChatServerThread extends Thread {
     public ChatServerThread(String name) throws IOException {
         super(name);
         socket = new DatagramSocket(4445);
-
+        
+        NetworkMessage.setIPPort(InetAddress.getLocalHost().getHostAddress()+" "+socket.getLocalPort());
+        NetworkMessage.setIDCounter(0);
         
         initUsers();
         initChats();

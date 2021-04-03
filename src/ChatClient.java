@@ -35,6 +35,8 @@ public class ChatClient extends JFrame implements ActionListener {
     public static void main(String[] args) throws IOException{
         serverAddress = InetAddress.getByName(args[0]);
         socket = new DatagramSocket();
+        
+        NetworkMessage.setIPPort(InetAddress.getLocalHost().getHostAddress()+" "+socket.getLocalPort());
 
         clUpdator = new ClientUpdatorThread();
         clUpdator.setIncommingMessages(incomingMessages);
