@@ -207,8 +207,12 @@ public class ChatClient extends JFrame implements ActionListener {
             public void actionPerformed(ActionEvent e) {
 		LocalDateTime dateTime = LocalDateTime.now();
 		DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm:ss");
-                sendMessage(username, openChat[0] ,"1" + "#" +username + "#" + dateTime.format(dateTimeFormat) +"#" + message.getText() + "#");
-		        String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
+                try{
+			sendMessage(username, openChat[0] ,"1" + "#" +username + "#" + dateTime.format(dateTimeFormat) +"#" + message.getText() + "#");
+		}catch(InterruptedException f){
+			f.printStackTrace();
+		}	
+			String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
                 Chat currentChat = new Chat(defaultChats);
                 for (int i = 0; i < chatsList.size(); i++) {
                     if(chatsList.get(i).getChatName().equals(openChat[0])){
@@ -328,8 +332,12 @@ public class ChatClient extends JFrame implements ActionListener {
         String action = e.getActionCommand();
         switch (action){
             case "send":
-                sendMessage(username, openChat[0] ,message.getText());
-		        String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
+		try{    
+                	sendMessage(username, openChat[0] ,message.getText());
+		}catch(InterruptedException f){
+			f.printStackTrace();
+		}	
+		 	String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
                 Chat currentChat = new Chat(defaultChats);
                 for (int i = 0; i < chatsList.size(); i++) {
                     if(chatsList.get(i).getChatName().equals(openChat[0])){
@@ -456,6 +464,7 @@ public class ChatClient extends JFrame implements ActionListener {
                 for (int i = 0; i < incomingMessages.size(); i++) {
                     if (incomingMessages.get(i).getFunction() == 3) {
                         response = incomingMessages.get(i);
+
                         incomingMessages.remove(i);
                         break;
                     }
@@ -480,10 +489,33 @@ public class ChatClient extends JFrame implements ActionListener {
     }
 
 
-    public void sendMessage(String user, String chat, String message){
+    public void sendMessage(String user, String chat, String message) throws InterruptedException {
 	NetworkMessage packet = new NetworkMessage(1, user, "request", chat + "\n" + message);		
     	sendData(packet.toString());
-	//TODO: Reciept validation
+        Thread.sleep(1000);
+        NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
+        while(response.getFunction() != 12) {
+            if (incomingMessages.size() > 0) {
+
+                for (int i = 0; i < incomingMessages.size(); i++) {
+                    if (incomingMessages.get(i).getFunction() == 12) {
+                        response = incomingMessages.get(i);
+                        incomingMessages.remove(i);
+                        break;
+                    }
+                }
+            } else {
+                //resend packet
+                //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
+                Thread.sleep(500);
+		sendData(packet.toString());
+            }
+            if (response.getFunction() != 12) {
+                //resend packet
+                Thread.sleep(500);
+		sendData(packet.toString());
+            }
+        }
     }
 
     //Try to use this method as a pattern to recieve packets

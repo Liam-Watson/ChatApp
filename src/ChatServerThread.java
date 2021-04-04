@@ -284,7 +284,7 @@ public class ChatServerThread extends Thread {
 			writeToFile(parts[1], "res/Chats/" + parts[0] );
     		}
     	}
-    	return new NetworkMessage(1, message.getUser(), status,""+ message.toString().hashCode()); 
+    	return new NetworkMessage(12, message.getUser(), "Success" ,""+ message.toString().hashCode()); 
     }
     
     public void end(){
