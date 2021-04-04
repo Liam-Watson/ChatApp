@@ -27,6 +27,7 @@ public class ClientMessageReceiverThread extends Thread{
     }
 
     public void run(){
+    	NetworkRequest networkRequests = new NetworkRequest("Server");
         while(keepRunning.get()){
             try {
                 byte[] buf = new byte[16384]; //TODO: This limits the size of messages we recieve. I byte is 1 character in a string. I have set it to 2^14 for now. 
@@ -34,7 +35,24 @@ public class ClientMessageReceiverThread extends Thread{
                 DatagramPacket packet = new DatagramPacket(buf, buf.length);
                 socket.receive(packet);
 		System.out.println("Message we recieved: " + (new String(packet.getData(), 0, packet.getLength())));
-		incomingMessages.add(new NetworkMessage(new String(packet.getData(), 0, packet.getLength())));
+		NetworkMessage n = new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
+		if(n.getStatus().equals("Duplicate")){
+			System.out.println("Duplicate Message Sent");
+			continue;
+		}
+		if(n.getStatus().equals("Corrupted")){
+			System.out.println("Message Sent was Corrupted");
+			continue;
+		}
+		if(!n.validate()){
+			System.out.println("Corrupt Message Received");
+			continue;
+		}
+		if(!networkRequests.makeRequest(n.getCounter())){
+			System.out.println("Duplicate Message Received");
+			continue;
+		}
+		incomingMessages.add(n);
             } catch (SocketException e){
                 System.out.println("socket closed");
             }catch(IOException e){
