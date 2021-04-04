@@ -79,7 +79,7 @@ public class ChatServerThread extends Thread {
 				String received = new String(clientPacket.getData(), 0, clientPacket.getLength());
 				//Parse string message to message object
 				NetworkMessage message = new NetworkMessage(received);
-				if(message.validate()){
+				if(!message.validate()){
 					sendData(new NetworkMessage(message.getFunction(), "Server", "Corrupted","").toString(),clientPacket);
 					continue;	
 				}
