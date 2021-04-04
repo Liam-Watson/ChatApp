@@ -264,8 +264,6 @@ public class ChatClient extends JFrame implements ActionListener {
                 }
             }
         }
-        chatButtons.add(new JButton("test"));
-        openChat[0] = "test";
         chatButtons.add(new JButton("+"));
 
         JPanel chats = new JPanel();

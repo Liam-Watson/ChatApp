@@ -220,7 +220,7 @@ public class ChatServerThread extends Thread {
 		}
 		writeToFile("", "res/Chats/" + String.join(";",chatUsers));		
 		chats.add(newChat);
-		NetworkMessage response = new NetworkMessage(3, message.getUser(), "Succsess", "Chat " + String.join(";",chatUsers) + " created.");
+		NetworkMessage response = new NetworkMessage(3, message.getUser(), "Success", "Chat " + String.join(";",chatUsers) + " created.");
 		return response;
 	}
     }
