@@ -112,12 +112,13 @@ public class ChatClient extends JFrame implements ActionListener {
                     interruptedException.printStackTrace();
                 }
                 if(success){
-        		NetworkMessage.setIDCounter(0);
+        		    NetworkMessage.setIDCounter(0);
                     username = usrNmeIn.getText();
                     clUpdator.setUsername(username);
                     login.setVisible(false);
                     chatApp = new ChatClient();
                     try {
+                        getChatHistory();
                         generateChatButtons();
                     } catch (InterruptedException interruptedException) {
                         interruptedException.printStackTrace();
@@ -146,12 +147,13 @@ public class ChatClient extends JFrame implements ActionListener {
                     interruptedException.printStackTrace();
                 }
                 if(success){
-        		NetworkMessage.setIDCounter(0);
+        		    NetworkMessage.setIDCounter(0);
                     username = usrNmeIn.getText();
                     clUpdator.setUsername(username);
                     login.setVisible(false);
                     chatApp = new ChatClient();
                     try {
+                        getChatHistory();
                         generateChatButtons();
                     } catch (InterruptedException interruptedException) {
                         interruptedException.printStackTrace();
@@ -208,14 +210,14 @@ public class ChatClient extends JFrame implements ActionListener {
 		new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-		LocalDateTime dateTime = LocalDateTime.now();
-		DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm:ss");
+		        LocalDateTime dateTime = LocalDateTime.now();
+		        DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm:ss");
                 try{
-			sendMessage(username, openChat[0] ,"1" + "#" +username + "#" + dateTime.format(dateTimeFormat) +"#" + message.getText() + "#");
-		}catch(InterruptedException f){
-			f.printStackTrace();
-		}	
-			String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
+			        sendMessage(username, openChat[0] ,"1" + "#" +username + "#" + dateTime.format(dateTimeFormat) +"#" + message.getText() + "#");
+		        }catch(InterruptedException f){
+			        f.printStackTrace();
+		        }
+                String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
                 Chat currentChat = new Chat(defaultChats);
                 for (int i = 0; i < chatsList.size(); i++) {
                     if(chatsList.get(i).getChatName().equals(openChat[0])){
@@ -251,33 +253,44 @@ public class ChatClient extends JFrame implements ActionListener {
     }
     public static void populateChatButton(){
         chatButtons.clear();
+
         for(int i = 0; i < chatsList.size(); i++){
-            Chat currentChat = chatsList.get(i);
-            chatButtons.add(new JButton(currentChat.getChatName()));
+            if(!chatsList.get(i).getChatName().equals("")) {
+                Chat currentChat = chatsList.get(i);
+                JButton chatButton = new JButton(currentChat.getChatName());
+                chatButton.setVisible(true);
+                chatButton.setText(currentChat.getChatName());
+                chatButtons.add(chatButton);
+            }
         }
     }
     public static void generateChatButtons() throws InterruptedException {
-        getChatHistory();
-        populateChatButton();
+        //getChatHistory();
+
         if(chatApp != null){
             Component[] componentList = chatApp.getComponents();
 
             for(Component c : componentList){
                 if(c instanceof JPanel){
                     if(c.getName().equals("chats")){
+                        System.out.println("frame removed");
                         chatApp.remove(c);
                     }
 
                 }
             }
         }
+        populateChatButton();
         chatButtons.add(new JButton("+"));
 
         JPanel chats = new JPanel();
+        chats.setName("chats");
         chats.setLayout(new GridLayout(chatButtons.size(),0));
         chats.setBackground(Color.GRAY);
+        //chatApp.remove(chats);
 
         for(int i = 0; i < chatButtons.size(); i++){
+
             chatButtons.get(i).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -288,6 +301,7 @@ public class ChatClient extends JFrame implements ActionListener {
 
                             otherUser = JOptionPane.showInputDialog("Enter the name of the user you want to chat with");
                             createChat(username, otherUser, serverAddress);
+                            String chatName = username+";"+otherUser;
                             boolean success = false;
                             try {
                                 success = getNewChatConfirmation();
@@ -296,6 +310,13 @@ public class ChatClient extends JFrame implements ActionListener {
                             }
                             if(success){
                                 try {
+                                    String [] newUsers = new String[2];
+                                    newUsers[0] = username;
+                                    newUsers[1] = otherUser;
+                                    Chat newChat = new Chat(newUsers);
+                                    chatsList.add(newChat);
+                                    chatApp.remove(chats);
+
                                     generateChatButtons();
                                 } catch (InterruptedException interruptedException) {
                                     interruptedException.printStackTrace();
@@ -313,11 +334,12 @@ public class ChatClient extends JFrame implements ActionListener {
 
                 }
             });
-            chatButtons.get(i).setSize(200,700);
+
             chats.add(chatButtons.get(i));
         }
 
         chatApp.add(chats, BorderLayout.WEST);
+        chats.revalidate();
     }
     public static void showMessages(){
         String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?

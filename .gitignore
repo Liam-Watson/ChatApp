@@ -36,6 +36,7 @@ src/*~
 src/.DS_Store
 src/.idea/
 src/Assignment1.iml
-
+src/Assignment_1.iml
 #Temp project files
 /res
+res/Users.txt
