@@ -7,6 +7,7 @@ $(BINDIR)/%.class:$(SRCDIR)/%.java
 
 CLASSES=NetworkMessage.class User.class\
 	ChatMessage.class Chat.class \
+	NetworkRequest.class \
 	ClientUpdatorThread.class ClientMessageReceiverThread.class\
 	ChatClient.class ChatServerThread.class \
         ChatServer.class

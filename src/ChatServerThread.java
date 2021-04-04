@@ -12,6 +12,7 @@ public class ChatServerThread extends Thread {
     
     private ArrayList<User> users;
     private ArrayList<Chat> chats;
+    private ArrayList<NetworkRequest> networkRequests;
     
     public ChatServerThread() throws IOException {
         this("ChatServerThread");
@@ -26,6 +27,7 @@ public class ChatServerThread extends Thread {
         
         initUsers();
         initChats();
+        networkRequests = new ArrayList<NetworkRequest>();
     }
 
     private void initUsers(){
@@ -77,6 +79,14 @@ public class ChatServerThread extends Thread {
 				String received = new String(clientPacket.getData(), 0, clientPacket.getLength());
 				//Parse string message to message object
 				NetworkMessage message = new NetworkMessage(received);
+				if(message.validate()){
+					sendData(new NetworkMessage(message.getFunction(), "Server", "Corrupted","").toString(),clientPacket);
+					continue;	
+				}
+				if(checkDuplicate(message)){
+					sendData(new NetworkMessage(message.getFunction(), "Server", "Duplicate","").toString(),clientPacket);
+					continue;
+				}
 				switch (message.getFunction()) {
 					case 1:
 						//recieveMessage
@@ -113,6 +123,20 @@ public class ChatServerThread extends Thread {
 			}
 		}
         //socket.close();
+    }
+    
+    private boolean checkDuplicate(NetworkMessage n){
+    	NetworkRequest nr = new NetworkRequest(n.getIPPort());
+    	if(!networkRequests.contains(nr)){
+    		networkRequests.add(nr);
+    		return false;
+    	}
+    	nr = networkRequests.get(networkRequests.indexOf(nr));//
+    	if(n.getFunction()==3 || n.getFunction()==4){
+    		nr.reset();
+    		return false;
+    	}
+    	return !nr.makeRequest(n.getCounter());
     }
 
     private DatagramPacket receiveData() {

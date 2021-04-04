@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class User {
-    private String username;//Thanks liam
+    private String username;
     private String password;
     private ArrayList<String> chats;
     

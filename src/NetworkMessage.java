@@ -18,7 +18,7 @@ public class NetworkMessage{
         status =s;
         messageContent = m;
         user = u;
-        ID = IPPort+IDcounter++;
+        ID = IPPort+"%"+IDcounter++;
         function = f;
         hash = toStringNoHash().hashCode();
     }
@@ -62,6 +62,16 @@ public class NetworkMessage{
     public String getStatus(){return status;}
     public String getUser(){return user;}
     public String getMessage(){return messageContent;}
+    
+    public String getIPPort(){
+            String[] IDsplit = ID.split("%");
+            return IDsplit[0];
+    }
+    
+    public int getCounter(){
+            String[] IDsplit = ID.split("%");
+            return Integer.parseInt(IDsplit[1]);
+    }
 
     public static void setIDCounter(int c){IDcounter = c;}
     public static void setIPPort(String s){IPPort = s;}
