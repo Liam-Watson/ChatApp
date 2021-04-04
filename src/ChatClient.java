@@ -37,6 +37,7 @@ public class ChatClient extends JFrame implements ActionListener {
         socket = new DatagramSocket();
         
         NetworkMessage.setIPPort(InetAddress.getLocalHost().getHostAddress()+" "+socket.getLocalPort());
+        NetworkMessage.setIDCounter(0);
 
         clUpdator = new ClientUpdatorThread();
         clUpdator.setIncommingMessages(incomingMessages);
@@ -111,6 +112,7 @@ public class ChatClient extends JFrame implements ActionListener {
                     interruptedException.printStackTrace();
                 }
                 if(success){
+        		NetworkMessage.setIDCounter(0);
                     username = usrNmeIn.getText();
                     clUpdator.setUsername(username);
                     login.setVisible(false);
@@ -144,6 +146,7 @@ public class ChatClient extends JFrame implements ActionListener {
                     interruptedException.printStackTrace();
                 }
                 if(success){
+        		NetworkMessage.setIDCounter(0);
                     username = usrNmeIn.getText();
                     clUpdator.setUsername(username);
                     login.setVisible(false);
