@@ -515,7 +515,8 @@ public class ChatClient extends JFrame implements ActionListener {
 
 
     public void sendMessage(String user, String chat, String message) throws InterruptedException {
-	NetworkMessage packet = new NetworkMessage(1, user, "request", chat + "\n" + message);		
+	NetworkMessage packet = new NetworkMessage(1, user, "request", message + "\n" + chat);	
+	System.out.println("Chat  :"+chat);	
     	sendData(packet.toString());
         Thread.sleep(1000);
         NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
@@ -540,6 +541,14 @@ public class ChatClient extends JFrame implements ActionListener {
                 Thread.sleep(500);
 		sendData(packet.toString());
             }
+        }
+        if(response.getFunction() == 12){
+        	if(response.getStatus().equals("Message Received")){
+        		System.out.println("Message: "+message+" received on chat "+chat);
+        	}else if(response.getStatus().equals("Message Received")){
+        		System.out.println("Could not find chat: "+chat);
+        		sendMessage(user, chat, message);
+        	}
         }
     }
 

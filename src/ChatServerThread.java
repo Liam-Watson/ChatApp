@@ -80,10 +80,12 @@ public class ChatServerThread extends Thread {
 				//Parse string message to message object
 				NetworkMessage message = new NetworkMessage(received);
 				if(!message.validate()){
+					System.out.println("Message Recieved was Coruppted");
 					sendData(new NetworkMessage(message.getFunction(), "Server", "Corrupted","").toString(),clientPacket);
 					continue;	
 				}
 				if(checkDuplicate(message)){
+					System.out.println("Message Recieved was a Duplicate");
 					sendData(new NetworkMessage(message.getFunction(), "Server", "Duplicate","").toString(),clientPacket);
 					continue;
 				}
@@ -274,17 +276,19 @@ public class ChatServerThread extends Thread {
     	String[] parts = message.getMessage().split("\n"); //TODO: Choose delimiter
     	String status = "Could not find chat";
     	//Message format: chatMessage.toString() / Recipents(seperated by ";")
-    	ChatMessage m = new ChatMessage(parts[1]);
-	Chat temp = new Chat((message.getUser()+";"+parts[1]).split(";"));
+    	ChatMessage m = new ChatMessage(parts[0]);
+	Chat temp = new Chat(parts[1].split(";"));
+	//System.out.println(">>>>>>>>>>>>>>" +temp.toString());
     	for(Chat c : chats){
-		if(c.getChatName().equals(parts[0])){
+		if(c.equals(temp)){
     		//if(temp.getChatName().equals(c.getChatName())){
+    			System.out.println("added");
     			c.addMessage(m.toString());
     			status = "Message Received";
-			writeToFile(parts[1], "res/Chats/" + parts[0] );
+			writeToFile(parts[0], "res/Chats/" + c.getChatName());
     		}
     	}
-    	return new NetworkMessage(12, message.getUser(), "Success" ,""+ message.toString().hashCode()); 
+    	return new NetworkMessage(12, message.getUser(), status ,"Function 12"); 
     }
     
     public void end(){
