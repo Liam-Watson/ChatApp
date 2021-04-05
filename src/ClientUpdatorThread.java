@@ -85,13 +85,14 @@ public class ClientUpdatorThread extends Thread{
                 if (incomingMessages.get(i).getFunction() == 0) {
 		    if(!incomingMessages.get(i).getMessage().equals("^")){
                     	String newMessagesBody = incomingMessages.get(i).getMessage();
-		    	System.out.println("MESSAGE BODY: " + incomingMessages.get(i).toString());
                     	String[] newMessages = newMessagesBody.split("\n");
                     	String ChatName = newMessages[0];
                     	for (int j = 0; j < chatsList.size(); j++) {
                             if (chatsList.get(j).getChatName().equals(ChatName)) {
                             	for (int k = 1; k < newMessages.length; k++) {
-                                	chatsList.get(j).addMessage(newMessages[k]);
+					if(!chatsList.get(j).containsMessage(newMessages[k])){
+                                		chatsList.get(j).addMessage(newMessages[k]);
+					}
                             	}
                             }
                     	}

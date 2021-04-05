@@ -27,6 +27,14 @@ public class Chat{
     public void addMessage(String line){
         messages.add(new ChatMessage(line));
     }
+    public boolean containsMessage(String line){
+	for(ChatMessage m : messages){
+		if(m.equals(new ChatMessage(line))){
+			return true;
+		}
+	}
+	return false;
+    }
     public String printMessages(){
         String outMessages = "";
 
