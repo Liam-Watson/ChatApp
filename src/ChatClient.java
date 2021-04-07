@@ -21,7 +21,7 @@ public class ChatClient extends JFrame implements ActionListener {
     static JScrollPane scrollPane = new JScrollPane(chatContent);
     static ChatClient chatApp;
     static JTextField usrNmeIn;
-    static JTextField passWdIn;
+    static JPasswordField passWdIn;
     static JFrame login;
     static String username;
     static String []openChat = new String[1];
@@ -83,7 +83,7 @@ public class ChatClient extends JFrame implements ActionListener {
         JLabel usrNme = new JLabel("Username:");
         JLabel pssWd = new JLabel("Password:");
         usrNmeIn = new JTextField();
-        passWdIn = new JTextField();
+        passWdIn = new JPasswordField();
         usrNmeIn.setSize(300, 50);
         passWdIn.setSize(300, 50);
         textFeilds.add(usrNme);
@@ -101,7 +101,7 @@ public class ChatClient extends JFrame implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 LoginOrSignUp = "login";
                 try {
-                    joinServer(usrNmeIn.getText(), passWdIn.getText(), "login", InetAddress.getByName(args[0]));
+                    joinServer(usrNmeIn.getText(), String.valueOf(passWdIn.getPassword()), "login", InetAddress.getByName(args[0]));
                 } catch (UnknownHostException unknownHostException) {
                     unknownHostException.printStackTrace();
                 }
@@ -136,7 +136,7 @@ public class ChatClient extends JFrame implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 LoginOrSignUp = "register";
                 try {
-                    joinServer(usrNmeIn.getText(), passWdIn.getText(), "register", InetAddress.getByName(args[0]));
+                    joinServer(usrNmeIn.getText(), String.valueOf(passWdIn.getPassword()), "register", InetAddress.getByName(args[0]));
                 } catch (UnknownHostException unknownHostException) {
                     unknownHostException.printStackTrace();
                 }
@@ -465,12 +465,12 @@ public class ChatClient extends JFrame implements ActionListener {
                 //resend packet
                 //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
                 Thread.sleep(500);
-                joinServer(usrNmeIn.getText(), passWdIn.getText(), LoginOrSignUp, serverAddress);
+                joinServer(usrNmeIn.getText(),String.valueOf(passWdIn.getPassword()), LoginOrSignUp, serverAddress);
             }
             if (response.getFunction() != 2) {
                 //resend packet
                 Thread.sleep(500);
-                joinServer(usrNmeIn.getText(), passWdIn.getText(), LoginOrSignUp, serverAddress);
+                joinServer(usrNmeIn.getText(), String.valueOf(passWdIn.getPassword()), LoginOrSignUp, serverAddress);
             }
         }
 	    if(response.getStatus().equals("Success")){
