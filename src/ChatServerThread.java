@@ -204,7 +204,9 @@ public class ChatServerThread extends Thread {
     private void writeToFile(String data, String fileName){
 	try{
 		FileWriter writer = new FileWriter(fileName, true);
-		writer.append(data + "\n");
+		if(data != null){
+			writer.append(data + "\n");
+		}
 		writer.close();
 	}catch(IOException e){
 		e.printStackTrace();
@@ -244,7 +246,7 @@ public class ChatServerThread extends Thread {
 				return new NetworkMessage(3,message.getUser(),"Failed: Chat not created. User: "+chatUsers[i]+" not found","");	
 			}
 		}
-		writeToFile("", "res/Chats/" + String.join(";",chatUsers));		
+		writeToFile(null, "res/Chats/" + String.join(";",chatUsers));		
 		chats.add(newChat);
 		NetworkMessage response = new NetworkMessage(3, message.getUser(), "Success", "Chat " + String.join(";",chatUsers) + " created.");
 		return response;
