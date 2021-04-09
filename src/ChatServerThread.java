@@ -168,9 +168,9 @@ public class ChatServerThread extends Thread {
             int port = clientPacket.getPort();
 	    System.out.println("Server is sending: \n ____________________\n" + data + "\n_____________________");
             DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
-            if(corrupt()){
+            //if(corrupt()){
 	    	socket.send(packet);
-	    }
+	    //}
             	return "sucsess";
         }catch(IOException e){
             System.out.println(e);
@@ -337,7 +337,7 @@ public class ChatServerThread extends Thread {
 		}
 	}
     }
-    public boolean corrupt(){
+   /* public boolean corrupt(){
         double rand = Math.random()*10;
         if(rand <= 1){
                 return false;
@@ -345,6 +345,6 @@ public class ChatServerThread extends Thread {
 		return true;
         }
 
-    }
+    }*/
 
 }
