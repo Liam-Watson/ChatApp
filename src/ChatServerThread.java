@@ -168,8 +168,10 @@ public class ChatServerThread extends Thread {
             int port = clientPacket.getPort();
 	    System.out.println("Server is sending: \n ____________________\n" + data + "\n_____________________");
             DatagramPacket packet = new DatagramPacket(buf, buf.length, address, port);
-            socket.send(packet);
-            return "sucsess";
+            if(corrupt()){
+	    	socket.send(packet);
+	    }
+            	return "sucsess";
         }catch(IOException e){
             System.out.println(e);
             return "failed";
@@ -334,6 +336,15 @@ public class ChatServerThread extends Thread {
 			return new NetworkMessage(0, message.getUser(), "failed3", "^");
 		}
 	}
+    }
+    public boolean corrupt(){
+        double rand = Math.random()*10;
+        if(rand <= 1){
+                return false;
+        }else{
+		return true;
+        }
+
     }
 
 }

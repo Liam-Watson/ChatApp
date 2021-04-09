@@ -68,8 +68,9 @@ public class ClientUpdatorThread extends Thread{
                     buf = request.toString().getBytes();
                     // send the response to the client at "address" and "port"
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddress, 4445);
-                    socket.send(packet);
-
+		    if(corrupt()){
+                    	socket.send(packet);
+		    }
                 }catch(IOException e){
                     e.printStackTrace();
 
@@ -119,6 +120,15 @@ public class ClientUpdatorThread extends Thread{
             }
 
         }
+    }
+    public boolean corrupt(){
+        double rand = Math.random()*10;
+        if(rand <= 1){
+                return false;
+        }else{
+		return true;
+        }
+
     }
 
 
