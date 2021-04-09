@@ -299,7 +299,7 @@ public class ChatClient extends JFrame implements ActionListener {
                         case "+":
                             otherUser = "";
 
-                            otherUser = JOptionPane.showInputDialog("Enter the name of the user you want to chat with");
+                            otherUser = JOptionPane.showInputDialog("Enter the name of the user(s) you want to chat with.\nTo make a group chat, enter the usernames with a semi-colon between them\n(e.g. John;Jane will create a chat with you, John and Jane)");
                             createChat(username, otherUser, serverAddress);
                             String chatName = username+";"+otherUser;
                             boolean success = false;
