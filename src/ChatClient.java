@@ -24,7 +24,7 @@ public class ChatClient extends JFrame implements ActionListener {
     static JPasswordField passWdIn;
     static JFrame login;
     static String username;
-    static String []openChat = new String[1];
+    static String[] openChat = new String[1];
     static InetAddress serverAddress;
     static String LoginOrSignUp;
     static String otherUser;
@@ -32,11 +32,11 @@ public class ChatClient extends JFrame implements ActionListener {
     static ClientUpdatorThread clUpdator;
     static ClientMessageReceiverThread clReceiver;
 
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
         serverAddress = InetAddress.getByName(args[0]);
         socket = new DatagramSocket();
-        
-        NetworkMessage.setIPPort(InetAddress.getLocalHost().getHostAddress()+" "+socket.getLocalPort());
+
+        NetworkMessage.setIPPort(InetAddress.getLocalHost().getHostAddress() + " " + socket.getLocalPort());
         NetworkMessage.setIDCounter(0);
 
         clUpdator = new ClientUpdatorThread();
@@ -61,7 +61,7 @@ public class ChatClient extends JFrame implements ActionListener {
 
         login = new JFrame("login/sign-up");
         login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        login.setSize(400,200);
+        login.setSize(400, 200);
         login.setLayout(new BorderLayout());
         login.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -75,11 +75,10 @@ public class ChatClient extends JFrame implements ActionListener {
         });
 
 
-
         JPanel textFeilds = new JPanel();
         textFeilds.setSize(400, 50);
-        textFeilds.setLayout(new GridLayout(2,2));
-        textFeilds.setBorder(new EmptyBorder(10, 20, 10, 20) );
+        textFeilds.setLayout(new GridLayout(2, 2));
+        textFeilds.setBorder(new EmptyBorder(10, 20, 10, 20));
         JLabel usrNme = new JLabel("Username:");
         JLabel pssWd = new JLabel("Password:");
         usrNmeIn = new JTextField();
@@ -94,7 +93,7 @@ public class ChatClient extends JFrame implements ActionListener {
         login.add(textFeilds, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel();
-        buttons.setLayout(new GridLayout(0,1));
+        buttons.setLayout(new GridLayout(0, 1));
         JButton loginBtn = new JButton("Login");
         loginBtn.addActionListener(new ActionListener() {
             @Override
@@ -111,8 +110,8 @@ public class ChatClient extends JFrame implements ActionListener {
                 } catch (InterruptedException interruptedException) {
                     interruptedException.printStackTrace();
                 }
-                if(success){
-        		    NetworkMessage.setIDCounter(0);
+                if (success) {
+                    NetworkMessage.setIDCounter(0);
                     username = usrNmeIn.getText();
                     clUpdator.setUsername(username);
                     login.setVisible(false);
@@ -124,7 +123,7 @@ public class ChatClient extends JFrame implements ActionListener {
                         interruptedException.printStackTrace();
                     }
                     chatApp.setVisible(true);
-                }else{
+                } else {
                     JOptionPane.showMessageDialog(null, "Login has failed please try again");
                 }
 
@@ -146,8 +145,8 @@ public class ChatClient extends JFrame implements ActionListener {
                 } catch (InterruptedException interruptedException) {
                     interruptedException.printStackTrace();
                 }
-                if(success){
-        		    NetworkMessage.setIDCounter(0);
+                if (success) {
+                    NetworkMessage.setIDCounter(0);
                     username = usrNmeIn.getText();
                     clUpdator.setUsername(username);
                     login.setVisible(false);
@@ -159,7 +158,7 @@ public class ChatClient extends JFrame implements ActionListener {
                         interruptedException.printStackTrace();
                     }
                     chatApp.setVisible(true);
-                }else{
+                } else {
                     JOptionPane.showMessageDialog(null, "Signup has failed please try again");
                 }
             }
@@ -175,31 +174,28 @@ public class ChatClient extends JFrame implements ActionListener {
 
     public ChatClient() {
         super("Chat App");
-        setSize(700,900);
+        setSize(700, 900);
         setLocation(50, 100);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-
-
-
 
 
         JPanel chat = new JPanel();
         chat.setLayout(new BorderLayout());
         chat.setSize(500, 900);
         chat.setBackground(Color.lightGray);
-        chat.setBorder(new EmptyBorder(30, 10, 0, 10) );
+        chat.setBorder(new EmptyBorder(30, 10, 0, 10));
 
 
         chatContent.setSize(40, 50);
-        chatContent.setBorder(new EmptyBorder(30, 30, 30, 30) );
+        chatContent.setBorder(new EmptyBorder(30, 30, 30, 30));
         chatContent.setEditable(false);
 
         chat.add(scrollPane, BorderLayout.CENTER);
 
         JPanel input = new JPanel();
         input.setLayout(new BorderLayout());
-        input.setBorder(new EmptyBorder(10, 10, 10, 10) );
+        input.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 
         message.setSize(400, 500);
@@ -207,29 +203,29 @@ public class ChatClient extends JFrame implements ActionListener {
 
         JButton send = new JButton("Send");
         send.addActionListener(
-		new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-		        LocalDateTime dateTime = LocalDateTime.now();
-		        DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm:ss");
-                try{
-			        sendMessage(username, openChat[0] ,"1" + "#" +username + "#" + dateTime.format(dateTimeFormat) +"#" + message.getText() + "#");
-		        }catch(InterruptedException f){
-			        f.printStackTrace();
-		        }
-                String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
-                Chat currentChat = new Chat(defaultChats);
-                for (int i = 0; i < chatsList.size(); i++) {
-                    if(chatsList.get(i).getChatName().equals(openChat[0])){
-                        currentChat = chatsList.get(i);
-                        currentChat.addMessage("1" + "#" +username + "#" +dateTime.format(dateTimeFormat) +"#" + message.getText() + "#");
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        LocalDateTime dateTime = LocalDateTime.now();
+                        DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm:ss");
+                        try {
+                            sendMessage(username, openChat[0], "1" + "#" + username + "#" + dateTime.format(dateTimeFormat) + "#" + message.getText() + "#");
+                        } catch (InterruptedException f) {
+                            f.printStackTrace();
+                        }
+                        String[] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
+                        Chat currentChat = new Chat(defaultChats);
+                        for (int i = 0; i < chatsList.size(); i++) {
+                            if (chatsList.get(i).getChatName().equals(openChat[0])) {
+                                currentChat = chatsList.get(i);
+                                currentChat.addMessage("1" + "#" + username + "#" + dateTime.format(dateTimeFormat) + "#" + message.getText() + "#");
+                            }
+                        }
+                        chatContent.setText(currentChat.printMessages());
+                        message.setText("");
                     }
-                }
-                chatContent.setText(currentChat.printMessages());
-		message.setText("");
-	    }
-        });
-        send.setSize(100,500);
+                });
+        send.setSize(100, 500);
         input.add(send, BorderLayout.EAST);
 
         chat.add(input, BorderLayout.SOUTH);
@@ -248,14 +244,13 @@ public class ChatClient extends JFrame implements ActionListener {
         });
 
 
-
-
     }
-    public static void populateChatButton(){
+
+    public static void populateChatButton() {
         chatButtons.clear();
 
-        for(int i = 0; i < chatsList.size(); i++){
-            if(!chatsList.get(i).getChatName().equals("")) {
+        for (int i = 0; i < chatsList.size(); i++) {
+            if (!chatsList.get(i).getChatName().equals("")) {
                 Chat currentChat = chatsList.get(i);
                 JButton chatButton = new JButton(currentChat.getChatName());
                 chatButton.setVisible(true);
@@ -264,15 +259,16 @@ public class ChatClient extends JFrame implements ActionListener {
             }
         }
     }
+
     public static void generateChatButtons() throws InterruptedException {
         //getChatHistory();
 
-        if(chatApp != null){
+        if (chatApp != null) {
             Component[] componentList = chatApp.getComponents();
 
-            for(Component c : componentList){
-                if(c instanceof JPanel){
-                    if(c.getName().equals("chats")){
+            for (Component c : componentList) {
+                if (c instanceof JPanel) {
+                    if (c.getName().equals("chats")) {
                         System.out.println("frame removed");
                         chatApp.remove(c);
                     }
@@ -285,32 +281,32 @@ public class ChatClient extends JFrame implements ActionListener {
 
         JPanel chats = new JPanel();
         chats.setName("chats");
-        chats.setLayout(new GridLayout(chatButtons.size(),0));
+        chats.setLayout(new GridLayout(chatButtons.size(), 0));
         chats.setBackground(Color.GRAY);
         //chatApp.remove(chats);
 
-        for(int i = 0; i < chatButtons.size(); i++){
+        for (int i = 0; i < chatButtons.size(); i++) {
 
             chatButtons.get(i).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     String action = e.getActionCommand();
-                    switch (action){
+                    switch (action) {
                         case "+":
                             otherUser = "";
 
                             otherUser = JOptionPane.showInputDialog("Enter the name of the user(s) you want to chat with.\nTo make a group chat, enter the usernames with a semi-colon between them\n(e.g. John;Jane will create a chat with you, John and Jane)");
                             createChat(username, otherUser, serverAddress);
-                            String chatName = username+";"+otherUser;
+                            String chatName = username + ";" + otherUser;
                             boolean success = false;
                             try {
                                 success = getNewChatConfirmation();
                             } catch (InterruptedException interruptedException) {
                                 interruptedException.printStackTrace();
                             }
-                            if(success){
+                            if (success) {
                                 try {
-                                    String [] newUsers = new String[2];
+                                    String[] newUsers = new String[2];
                                     newUsers[0] = username;
                                     newUsers[1] = otherUser;
                                     Chat newChat = new Chat(newUsers);
@@ -321,7 +317,7 @@ public class ChatClient extends JFrame implements ActionListener {
                                 } catch (InterruptedException interruptedException) {
                                     interruptedException.printStackTrace();
                                 }
-                            }else{
+                            } else {
                                 JOptionPane.showMessageDialog(null, "Chat creation has failed, other user not found");
                             }
                             otherUser = "";
@@ -330,7 +326,7 @@ public class ChatClient extends JFrame implements ActionListener {
                             openChat[0] = action;
                             break;
                     }
-		            showMessages();
+                    showMessages();
 
                 }
             });
@@ -341,11 +337,12 @@ public class ChatClient extends JFrame implements ActionListener {
         chatApp.add(chats, BorderLayout.WEST);
         chats.revalidate();
     }
-    public static void showMessages(){
-        String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
+
+    public static void showMessages() {
+        String[] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
         Chat currentChat = new Chat(defaultChats);
         for (int i = 0; i < chatsList.size(); i++) {
-            if(chatsList.get(i).getChatName().equals(openChat[0])){
+            if (chatsList.get(i).getChatName().equals(openChat[0])) {
                 currentChat = chatsList.get(i);
             }
         }
@@ -355,17 +352,17 @@ public class ChatClient extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String action = e.getActionCommand();
-        switch (action){
+        switch (action) {
             case "send":
-		try{    
-                	sendMessage(username, openChat[0] ,message.getText());
-		}catch(InterruptedException f){
-			f.printStackTrace();
-		}	
-		 	String [] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
+                try {
+                    sendMessage(username, openChat[0], message.getText());
+                } catch (InterruptedException f) {
+                    f.printStackTrace();
+                }
+                String[] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
                 Chat currentChat = new Chat(defaultChats);
                 for (int i = 0; i < chatsList.size(); i++) {
-                    if(chatsList.get(i).getChatName().equals(openChat[0])){
+                    if (chatsList.get(i).getChatName().equals(openChat[0])) {
                         currentChat = chatsList.get(i);
                         currentChat.addMessage("1#" + username + "#" + message.getText() + "#");
                     }
@@ -376,42 +373,44 @@ public class ChatClient extends JFrame implements ActionListener {
 
         }
     }
-	/*
-	 * Regster a user with the server by sending a packet containing a name and password
-	 * @params register is a variable to tell the server if a user wishes to sign in or create a new user
-	 * On the server side we get name from userName and the intent from status and password from message
-	 */
-	private static void joinServer(String name, String password, String register, InetAddress address){
-		if(register.equals("login")){
-			NetworkMessage message = new NetworkMessage(4, name, register, password);
-			sendData(message.toString());
-			//byte[] buf = message.toString().getBytes();
-			//DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-			//socket.send(packet);
-		}else{
-			NetworkMessage message = new NetworkMessage(3, name, register, password);
-			sendData(message.toString());
-			//byte[] buf = message.toString().getBytes();
-			//DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-			//socket.send(packet);
-		}
-	}
 
-	public static void createChat(String currentName, String userNames, InetAddress address){
-		NetworkMessage message = new NetworkMessage(6, currentName, "request", userNames);
-		sendData(message.toString());	
-		//byte[] buf = message.toString().getBytes();
-		//DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
-		//socket.send(packet);
-	}
-	public static void getChatHistory() throws InterruptedException {
-	//send packet to request chats
-	    NetworkMessage request = new NetworkMessage(5, username, "request", username);
-	    sendData(request.toString());
+    /*
+     * Regster a user with the server by sending a packet containing a name and password
+     * @params register is a variable to tell the server if a user wishes to sign in or create a new user
+     * On the server side we get name from userName and the intent from status and password from message
+     */
+    private static void joinServer(String name, String password, String register, InetAddress address) {
+        if (register.equals("login")) {
+            NetworkMessage message = new NetworkMessage(4, name, register, password);
+            sendData(message.toString());
+            //byte[] buf = message.toString().getBytes();
+            //DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
+            //socket.send(packet);
+        } else {
+            NetworkMessage message = new NetworkMessage(3, name, register, password);
+            sendData(message.toString());
+            //byte[] buf = message.toString().getBytes();
+            //DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
+            //socket.send(packet);
+        }
+    }
+
+    public static void createChat(String currentName, String userNames, InetAddress address) {
+        NetworkMessage message = new NetworkMessage(6, currentName, "request", userNames);
+        sendData(message.toString());
+        //byte[] buf = message.toString().getBytes();
+        //DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
+        //socket.send(packet);
+    }
+
+    public static void getChatHistory() throws InterruptedException {
+        //send packet to request chats
+        NetworkMessage request = new NetworkMessage(5, username, "request", username);
+        sendData(request.toString());
         chatsList.clear();
         Thread.sleep(1000);
         NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
-        while(response.getFunction() != 1) {
+        while (response.getFunction() != 1) {
             if (incomingMessages.size() > 0) {
                 for (int l = 0; l < incomingMessages.size(); l++) {
                     if (incomingMessages.get(l).getFunction() == 1) {
@@ -424,34 +423,36 @@ public class ChatClient extends JFrame implements ActionListener {
                 //resend packet after delay
                 //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
                 Thread.sleep(500);
+                request = new NetworkMessage(5, username, "request", username);
                 sendData(request.toString());
             }
             if (response.getFunction() != 1) {
                 //resend packet after delay
                 Thread.sleep(500);
+                request = new NetworkMessage(5, username, "request", username);
                 sendData(request.toString());
             }
         }
 
 
-	    String chatsReceived = response.getMessage();
-	    if(chatsReceived != null) {
-	        String[] breakChats = chatsReceived.split("~");
-	        for (int i = 0; i < breakChats.length; i++) {
-	            String currentChat = breakChats[i];
-	            Chat newChat = new Chat(currentChat);
-	            chatsList.add(newChat);
-	        }
-	    }
+        String chatsReceived = response.getMessage();
+        if (chatsReceived != null) {
+            String[] breakChats = chatsReceived.split("~");
+            for (int i = 0; i < breakChats.length; i++) {
+                String currentChat = breakChats[i];
+                Chat newChat = new Chat(currentChat);
+                chatsList.add(newChat);
+            }
+        }
 
     }
 
     public static boolean getLoginConfirmation() throws InterruptedException {
-	    //get response from server if the login succeeded.
+        //get response from server if the login succeeded.
         //sorry about these default objects, Java just wont let me use a variable that has not been initialised.
         Thread.sleep(1000);
         NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
-        while(response.getFunction() != 2) {
+        while (response.getFunction() != 2) {
             if (incomingMessages.size() > 0) {
 
                 for (int i = 0; i < incomingMessages.size(); i++) {
@@ -465,7 +466,7 @@ public class ChatClient extends JFrame implements ActionListener {
                 //resend packet
                 //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
                 Thread.sleep(500);
-                joinServer(usrNmeIn.getText(),String.valueOf(passWdIn.getPassword()), LoginOrSignUp, serverAddress);
+                joinServer(usrNmeIn.getText(), String.valueOf(passWdIn.getPassword()), LoginOrSignUp, serverAddress);
             }
             if (response.getFunction() != 2) {
                 //resend packet
@@ -473,17 +474,18 @@ public class ChatClient extends JFrame implements ActionListener {
                 joinServer(usrNmeIn.getText(), String.valueOf(passWdIn.getPassword()), LoginOrSignUp, serverAddress);
             }
         }
-	    if(response.getStatus().equals("Success")){
-		return true;
-	    }else{
-		return false;
-	    }
+        if (response.getStatus().equals("Success")) {
+            return true;
+        } else {
+            return false;
+        }
     }
+
     public static boolean getNewChatConfirmation() throws InterruptedException {
         //get response from server if the chat creation succeeded.
         Thread.sleep(1000);
         NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
-        while(response.getFunction() != 3) {
+        while (response.getFunction() != 3) {
             if (incomingMessages.size() > 0) {
 
                 for (int i = 0; i < incomingMessages.size(); i++) {
@@ -506,21 +508,21 @@ public class ChatClient extends JFrame implements ActionListener {
                 createChat(username, otherUser, serverAddress);
             }
         }
-	    if(response.getStatus().equals("Success")){
-		    return true;
-	    }else{
-		    return false;
-	    }
+        if (response.getStatus().equals("Success")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
     public void sendMessage(String user, String chat, String message) throws InterruptedException {
-	NetworkMessage packet = new NetworkMessage(1, user, "request", message + "\n" + chat);	
-	System.out.println("Chat  :"+chat);	
-    	sendData(packet.toString());
+        NetworkMessage packet = new NetworkMessage(1, user, "request", message + "\n" + chat);
+        System.out.println("Chat  :" + chat);
+        sendData(packet.toString());
         Thread.sleep(1000);
         NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
-        while(response.getFunction() != 12) {
+        while (response.getFunction() != 12) {
             if (incomingMessages.size() > 0) {
 
                 for (int i = 0; i < incomingMessages.size(); i++) {
@@ -534,21 +536,23 @@ public class ChatClient extends JFrame implements ActionListener {
                 //resend packet
                 //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
                 Thread.sleep(500);
-		sendData(packet.toString());
+                packet = new NetworkMessage(1, user, "request", message + "\n" + chat);
+                sendData(packet.toString());
             }
             if (response.getFunction() != 12) {
                 //resend packet
                 Thread.sleep(500);
-		sendData(packet.toString());
+                packet = new NetworkMessage(1, user, "request", message + "\n" + chat);
+                sendData(packet.toString());
             }
         }
-        if(response.getFunction() == 12){
-        	if(response.getStatus().equals("Message Received")){
-        		System.out.println("Message: "+message+" received on chat "+chat);
-        	}else if(response.getStatus().equals("Message Received")){
-        		System.out.println("Could not find chat: "+chat);
-        		sendMessage(user, chat, message);
-        	}
+        if (response.getFunction() == 12) {
+            if (response.getStatus().equals("Message Received")) {
+                System.out.println("Message: " + message + " received on chat " + chat);
+            } else if (response.getStatus().equals("Message Received")) {
+                System.out.println("Could not find chat: " + chat);
+                sendMessage(user, chat, message);
+            }
         }
     }
 
@@ -572,37 +576,37 @@ public class ChatClient extends JFrame implements ActionListener {
             buf = data.getBytes();
             // send the response to the client at "address" and "port"
             DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddress, 4445);
-	    if(corrupt()){
-            	socket.send(packet);
-            	return "sucsess";
-	    }else{
-		return "failed";
-	    }
-        }catch(IOException e){
+            if (corrupt()) {
+                socket.send(packet);
+                return "sucsess";
+            } else {
+                return "failed";
+            }
+        } catch (IOException e) {
             e.printStackTrace();
             return "failed";
         }
     }
 
-    public static boolean corrupt(){
-	double rand = Math.random()*10;
-	if(rand <= 1){
-		return false;
-	}else{
-		return true;	
-	}	
+    public static boolean corrupt() {
+        double rand = Math.random() * 10;
+        if (rand <= 1) {
+            return false;
+        } else {
+            return true;
+        }
 
     }
 
-	/*
- *    public NetworkMessage(int f, String u, String s, String m){
- *       status =s;
- *       messageContent = m;
- *       user = u;
- *       ID = u+IDcounter++;
- *       function = f;
- *   }
- */
+    /*
+     *    public NetworkMessage(int f, String u, String s, String m){
+     *       status =s;
+     *       messageContent = m;
+     *       user = u;
+     *       ID = u+IDcounter++;
+     *       function = f;
+     *   }
+     */
 
 }
 

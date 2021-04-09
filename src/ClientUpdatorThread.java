@@ -84,20 +84,20 @@ public class ClientUpdatorThread extends Thread{
 
             for (int i = 0; i < incomingMessages.size(); i++) {
                 if (incomingMessages.get(i).getFunction() == 0) {
-		    if(!incomingMessages.get(i).getMessage().equals("^")){
-                    	String newMessagesBody = incomingMessages.get(i).getMessage();
-                    	String[] newMessages = newMessagesBody.split("\n");
-                    	String ChatName = newMessages[0];
-                    	for (int j = 0; j < chatsList.size(); j++) {
+                    if (!incomingMessages.get(i).getMessage().equals("^")) {
+                        String newMessagesBody = incomingMessages.get(i).getMessage();
+                        String[] newMessages = newMessagesBody.split("\n");
+                        String ChatName = newMessages[0];
+                        for (int j = 0; j < chatsList.size(); j++) {
                             if (chatsList.get(j).getChatName().equals(ChatName)) {
-                            	for (int k = 1; k < newMessages.length; k++) {
-					if(!chatsList.get(j).containsMessage(newMessages[k])){
-                                		chatsList.get(j).addMessage(newMessages[k]);
-					}
-                            	}
+                                for (int k = 1; k < newMessages.length; k++) {
+                                    if (!chatsList.get(j).containsMessage(newMessages[k])) {
+                                        chatsList.get(j).addMessage(newMessages[k]);
+                                    }
+                                }
                             }
-                    	}
-		    }
+                        }
+                    }
                     incomingMessages.remove(i);
 
 

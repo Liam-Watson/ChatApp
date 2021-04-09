@@ -16,22 +16,24 @@ public class ChatMessage{
         content = c;
         
         Scanner scan = new Scanner(r).useDelimiter(";");
+        readBy = new ArrayList<String>();
         while(scan.hasNext()) readBy.add(scan.next());
         scan.close();
     }
-    
-    public ChatMessage(String a){
+
+    public ChatMessage(String a) {
         Scanner scLine = new Scanner(a).useDelimiter(delimiter);
         ID = Integer.parseInt(scLine.next());
         user = scLine.next();
         dateTime = scLine.next();
         content = scLine.next();
-       	if(scLine.hasNext()){ 
-        	Scanner scan = new Scanner(scLine.next()).useDelimiter(";");
-		while(scan.hasNext()) readBy.add(scan.next());
-        	scan.close();
-	}
-        
+        if (scLine.hasNext()) {
+            Scanner scan = new Scanner(scLine.next()).useDelimiter(";");
+            readBy = new ArrayList<String>();
+            while (scan.hasNext()) readBy.add(scan.next());
+            scan.close();
+        }
+
         scLine.close();
     }
     
