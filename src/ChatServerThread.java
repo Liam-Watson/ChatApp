@@ -1,3 +1,5 @@
+//import sun.nio.ch.Net;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -113,6 +115,10 @@ public class ChatServerThread extends Thread {
 					case 6:
 						sendData(createChat(message).toString(), clientPacket);
 						//createChat
+						break;
+					case 7:
+						//get new chats
+						sendData(getNewChats(message).toString(), clientPacket);
 						break;
 					default:
 						//sendData(generalError(), clientPacket);
@@ -275,6 +281,34 @@ public class ChatServerThread extends Thread {
 	}
    	 
     }
+    private NetworkMessage getNewChats(NetworkMessage message){
+    	String[] messageData = message.getMessage().split("\n");
+    	String username = messageData[0];
+    	String newChats = "";
+    	boolean hasChat = false;
+    	String currentChat =  "";
+    	for(Chat c : chats){
+    		if(c.getChatName().contains(username)){
+    			currentChat = c.getChatName();
+    			for(int j = 1; j < messageData.length; j++){
+
+    				if(messageData[j].trim().equals(currentChat.trim())){
+    					hasChat = true;
+					}
+
+				}
+				if(!hasChat) {
+					newChats += currentChat + "\n";
+				}
+				hasChat = false;
+			}
+		}
+    	if(newChats.equals("")) {
+			return new NetworkMessage(5, message.getUser(), "NoNewChats", "");
+		}else{
+			return new NetworkMessage(5, message.getUser(), "NewChats", newChats);
+		}
+	}
 
 	private NetworkMessage recieveMessage(NetworkMessage message) {
 		String[] parts = message.getMessage().split("\n"); //TODO: Choose delimiter

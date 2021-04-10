@@ -1,4 +1,7 @@
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -16,6 +19,8 @@ public class ClientUpdatorThread extends Thread{
     String [] openChat = new String[1];
     JTextArea chatContent = new JTextArea();
     DatagramSocket socket = new DatagramSocket();
+    JPanel chats = new JPanel();
+    JFrame chatApp = new JFrame();
     InetAddress serverAddress;
 
 
@@ -33,6 +38,11 @@ public class ClientUpdatorThread extends Thread{
     public void setChatsList(List<Chat> in){
         chatsList = in;
     }
+    public void setNewChatVars(JPanel inP, JFrame inF){
+        chats = inP;
+        chatApp = inF;
+    }
+
     public void setOutputArea(JTextArea in){
         chatContent = in;
     }
@@ -83,7 +93,28 @@ public class ClientUpdatorThread extends Thread{
 
 
             }
+            String currentChats = username + "\n";
+            for (int i = 0; i < chatsList.size(); i++) {
+                if(!chatsList.get(i).getChatName().equals("")) {
+                    currentChats += chatsList.get(i).getChatName() + "\n";
+                }
+            }
+            NetworkMessage chatRequest = new NetworkMessage(7, username, "request", currentChats);
 
+            try {
+                byte[] buf = new byte[256];
+                buf = chatRequest.toString().getBytes();
+                // send the response to the client at "address" and "port"
+                DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddress, 4445);
+                if (corrupt()) {
+                    socket.send(packet);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+
+            //check incomming messages for any new chat messages
             for (int i = 0; i < incomingMessages.size(); i++) {
                 if (incomingMessages.get(i).getFunction() == 0) {
                     if (!incomingMessages.get(i).getMessage().equals("^")) {
@@ -105,7 +136,7 @@ public class ClientUpdatorThread extends Thread{
 
                 }
             }
-
+            //show the new chat message on the output text area
             for (int i = 0; i < chatsList.size(); i++) {
                 if (chatsList.get(i).getChatName().equals(openChat[0])) {
                     chatContent.setText(chatsList.get(i).printMessages());
@@ -113,7 +144,49 @@ public class ClientUpdatorThread extends Thread{
                 }
             }
 
-            //ChatClient.showMessages();
+            //check for any new chats
+            for (int i = 0; i < incomingMessages.size(); i++) {
+                if (incomingMessages.get(i).getFunction() == 5){
+                    if(!incomingMessages.get(i).getStatus().equals("NoNewChats")){
+                        String [] newChats = incomingMessages.get(i).getMessage().split("\n");
+                        for(int j = 0; j < newChats.length; j++){
+                            boolean alreadyHasChat = false;
+                            for(int k = 0; k < chatsList.size(); k++) {
+                                if(chatsList.get(k).getChatName().equals(newChats[j])){
+                                    alreadyHasChat = true;
+                                }
+                            }
+                            if(!alreadyHasChat) {
+                                String newChatName = newChats[j];
+                                chatsList.add(new Chat(newChats[j]));
+                                JButton newChat = new JButton(newChats[j]);
+                                newChat.addActionListener(new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        openChat[0] = newChatName;
+                                        for (int i = 0; i < chatsList.size(); i++) {
+                                            if (chatsList.get(i).getChatName().equals(openChat[0])) {
+                                                chatContent.setText(chatsList.get(i).printMessages());
+
+                                            }
+                                        }
+                                    }
+                                });
+
+                                chats.add(newChat);
+                                chatApp.remove(chats);
+                                chatApp.add(chats, BorderLayout.WEST);
+                                chats.revalidate();
+                            }
+                        }
+
+                    }
+                    incomingMessages.remove(i);
+                }
+            }
+
+
+
             //Thread sleeps for 2 seconds, i.e chats will be updated every 2 seconds
             try {
                 sleep(2000);

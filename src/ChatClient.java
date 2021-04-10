@@ -22,6 +22,7 @@ public class ChatClient extends JFrame implements ActionListener {
     static JTextArea chatContent = new JTextArea();
     static JScrollPane scrollPane = new JScrollPane(chatContent);
     static ChatClient chatApp;
+    static JPanel chats = new JPanel();
     static JTextField usrNmeIn;
     static JPasswordField passWdIn;
     static JFrame login;
@@ -48,6 +49,7 @@ public class ChatClient extends JFrame implements ActionListener {
         clUpdator.setOutputArea(chatContent);
         clUpdator.setSocket(socket);
         clUpdator.setServerAddress(serverAddress);
+
 
 
         clReceiver = new ClientMessageReceiverThread();
@@ -118,6 +120,7 @@ public class ChatClient extends JFrame implements ActionListener {
                     clUpdator.setUsername(username);
                     login.setVisible(false);
                     chatApp = new ChatClient();
+                    clUpdator.setNewChatVars(chats, chatApp);
                     try {
                         getChatHistory();
                         generateChatButtons();
@@ -153,6 +156,7 @@ public class ChatClient extends JFrame implements ActionListener {
                     clUpdator.setUsername(username);
                     login.setVisible(false);
                     chatApp = new ChatClient();
+                    clUpdator.setNewChatVars(chats, chatApp);
                     try {
                         getChatHistory();
                         generateChatButtons();
@@ -281,7 +285,8 @@ public class ChatClient extends JFrame implements ActionListener {
         populateChatButton();
         chatButtons.add(new JButton("+"));
 
-        JPanel chats = new JPanel();
+        chats = new JPanel();
+        clUpdator.setNewChatVars(chats, chatApp);
         chats.setName("chats");
         chats.setLayout(new GridLayout(chatButtons.size(), 0));
         chats.setBackground(Color.GRAY);
