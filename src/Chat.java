@@ -28,12 +28,12 @@ public class Chat{
         messages.add(new ChatMessage(line));
     }
     public boolean containsMessage(String line){
-	for(ChatMessage m : messages){
-		if(m.equals(new ChatMessage(line))){
-			return true;
-		}
-	}
-	return false;
+        for (ChatMessage m : messages) {
+            if (m.equals(new ChatMessage(line))) {
+                return true;
+            }
+        }
+        return false;
     }
     public String printMessages(){
         String outMessages = "";
@@ -46,7 +46,7 @@ public class Chat{
     }
     public ChatMessage getMostRecentMessage(){
 	if(messages.size() == 0){
-		return null; //TODO: Decide on a way to deal with no messages  
+		return null; //TODO: Decide on a way to deal with no messages
 	}
         return messages.get(messages.size()-1);
     }
@@ -64,10 +64,10 @@ public class Chat{
     }
     public String toString(){
         String out = ""; //TODO: Multiple users > 2 
-	out+= String.join(";",users);
-	
-	out+="\n";
-        for(ChatMessage i : messages) out += i +"\n";
+        out += String.join(";", users);
+
+        out += "\n";
+        for (ChatMessage i : messages) out += i + "\n";
         return out;
     }
     public String getChatName(){

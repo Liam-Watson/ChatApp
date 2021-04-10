@@ -312,33 +312,41 @@ public class ChatServerThread extends Thread {
  *   }
  */
     public NetworkMessage sendMessage(NetworkMessage message){
-	    //Note Here we are using an & to delimit chat name and chat message. The same is used client side.
-	    //There is also a problem where there have been no message changes and for the Networkmessage contructor we need a character to send. I have used ^
-        if(message.getMessage().equals("^")){
-	    Chat tmpChat = new Chat(message.getMessage());
-		if(chats.contains(tmpChat)){
-			Chat actualChat = chats.get(chats.indexOf(tmpChat));
-	    		return new NetworkMessage(0, message.getUser(), "succsess", actualChat.toString()); //TODO: Handle case where chat is empty
-		}else{
-			return new NetworkMessage(0, message.getUser(), "failed1", "^");
-
-		}
-	}else{
-	    Chat tmpChat = new Chat(message.getMessage());
-		if(chats.contains(tmpChat)){
-			Chat actualChat = chats.get(chats.indexOf(tmpChat));
-			ChatMessage msg = new ChatMessage(message.getMessage().split("\n")[1]);
-			String messages = actualChat.getMessagesSince(msg);
-			if(messages.equals("")){
-				return new NetworkMessage(0, message.getUser(), "failed2", "^");
+		//Note Here we are using an & to delimit chat name and chat message. The same is used client side.
+		//There is also a problem where there have been no message changes and for the Networkmessage contructor we need a character to send. I have used ^
+		String[] messageData = message.getMessage().split("\n");
+		if (messageData[1].equals("empty")) {
+			Chat tmpChat = new Chat(messageData[0]);
+			int index = -1;
+			for(int i = 0; i < chats.size(); i++){
+				if(chats.get(i).getChatName().equals(tmpChat.getChatName())){
+					index = i;
+				}
 			}
-					
-			return new NetworkMessage(0, message.getUser(), "succsess", messages);
-		}else{
-			return new NetworkMessage(0, message.getUser(), "failed3", "^");
+
+			if (index != -1) {
+				Chat actualChat = chats.get(index);
+				return new NetworkMessage(0, message.getUser(), "succsess", actualChat.toString()); //TODO: Handle case where chat is empty
+			} else {
+				return new NetworkMessage(0, message.getUser(), "failed1", "^");
+
+			}
+		} else {
+			Chat tmpChat = new Chat(message.getMessage());
+			if (chats.contains(tmpChat)) {
+				Chat actualChat = chats.get(chats.indexOf(tmpChat));
+				ChatMessage msg = new ChatMessage(message.getMessage().split("\n")[1]);
+				String messages = actualChat.getMessagesSince(msg);
+				if (messages.equals("")) {
+					return new NetworkMessage(0, message.getUser(), "failed2", "^");
+				}
+
+				return new NetworkMessage(0, message.getUser(), "succsess", messages);
+			} else {
+				return new NetworkMessage(0, message.getUser(), "failed3", "^");
+			}
 		}
 	}
-    }
    /* public boolean corrupt(){
         double rand = Math.random()*10;
         if(rand <= 1){

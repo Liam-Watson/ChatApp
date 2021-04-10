@@ -51,15 +51,17 @@ public class ClientUpdatorThread extends Thread{
 
 
     public void run(){
-        while(keepRunning.get()) {
+        while (keepRunning.get()) {
             for (int i = 0; i < chatsList.size(); i++) {
                 String chatName = chatsList.get(i).getChatName();
                 ChatMessage mostRecentMessage = chatsList.get(i).getMostRecentMessage();
                 String updateChatRequest = "^";
-		if(mostRecentMessage != null){
-			updateChatRequest = chatName + "\n" + mostRecentMessage.toString();
-		}
-		//based on the doc I assume that a the sendMessage function (2) is what we will use for this
+                if (mostRecentMessage != null) {
+                    updateChatRequest = chatName + "\n" + mostRecentMessage.toString();
+                }else {
+                    updateChatRequest = chatName + "\n" + "empty";
+                }
+                //based on the doc I assume that a the sendMessage function (2) is what we will use for this
                 //message body will be chatname <newline> most recent chat message (in String form)
                 NetworkMessage request = new NetworkMessage(2, username, "request", updateChatRequest);
 
@@ -68,10 +70,10 @@ public class ClientUpdatorThread extends Thread{
                     buf = request.toString().getBytes();
                     // send the response to the client at "address" and "port"
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, serverAddress, 4445);
-		    if(corrupt()){
-                    	socket.send(packet);
-		    }
-                }catch(IOException e){
+                    if (corrupt()) {
+                        socket.send(packet);
+                    }
+                } catch (IOException e) {
                     e.printStackTrace();
 
                 }
@@ -105,7 +107,7 @@ public class ClientUpdatorThread extends Thread{
             }
 
             for (int i = 0; i < chatsList.size(); i++) {
-                if(chatsList.get(i).getChatName().equals(openChat[0])){
+                if (chatsList.get(i).getChatName().equals(openChat[0])) {
                     chatContent.setText(chatsList.get(i).printMessages());
 
                 }
@@ -121,12 +123,13 @@ public class ClientUpdatorThread extends Thread{
 
         }
     }
-    public boolean corrupt(){
-        double rand = Math.random()*10;
-        if(rand <= 1){
-                return false;
-        }else{
-		return true;
+
+    public boolean corrupt() {
+        double rand = Math.random() * 10;
+        if (rand <= 1) {
+            return false;
+        } else {
+            return true;
         }
 
     }

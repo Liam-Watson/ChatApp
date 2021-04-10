@@ -12,6 +12,8 @@ import java.time.LocalDateTime; // Import the LocalDateTime class
 import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
 
 public class ChatClient extends JFrame implements ActionListener {
+    //declare public and static variables that need to be used in multiple methods and classes
+
     static DatagramSocket socket; //This is for sending
     static List<Chat> chatsList = Collections.synchronizedList(new ArrayList<Chat>());
     static ArrayList<JButton> chatButtons = new ArrayList<JButton>();
