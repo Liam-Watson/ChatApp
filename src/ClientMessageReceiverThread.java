@@ -11,6 +11,9 @@ public class ClientMessageReceiverThread extends Thread{
     AtomicBoolean keepRunning = new AtomicBoolean(true);
     DatagramSocket socket = new DatagramSocket();
     List<NetworkMessage> incomingMessages = Collections.synchronizedList(new ArrayList<NetworkMessage>());
+    
+    public NetworkRequest networkRequest = new NetworkRequest("Server");
+    
     public ClientMessageReceiverThread() throws IOException {
         super("ClientMessageReceiverThread");
 
@@ -36,8 +39,9 @@ public class ClientMessageReceiverThread extends Thread{
                 socket.receive(packet);
 		System.out.println("Message we recieved: " + (new String(packet.getData(), 0, packet.getLength())));
 		NetworkMessage n = new NetworkMessage(new String(packet.getData(), 0, packet.getLength()));
-		if(n.getStatus().equals("Duplicate")){
-			System.out.println("Duplicate Message Sent");
+		
+		if(checkDuplicate(n)){
+			System.out.println("Duplicate Message Recieved");
 			continue;
 		}
 		if(n.getStatus().equals("Corrupted")){
@@ -65,5 +69,17 @@ public class ClientMessageReceiverThread extends Thread{
     public void end(){
         keepRunning.set(false);
         socket.close();
+    }
+    
+    private boolean checkDuplicate(NetworkMessage n){
+    	if(networkRequest==null){
+    		networkRequest = new NetworkRequest("Server");
+    		return false;
+    	}
+    	if(n.getFunction()==2){
+    		networkRequest.reset();
+    		return false;
+    	}
+    	return !networkRequest.makeRequest(n.getCounter());
     }
 }

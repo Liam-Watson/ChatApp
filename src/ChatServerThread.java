@@ -88,8 +88,7 @@ public class ChatServerThread extends Thread {
 				}
 				if(checkDuplicate(message)){
 					System.out.println("Message Recieved was a Duplicate");
-					sendData(new NetworkMessage(message.getFunction(), "Server", "Duplicate","").toString(),clientPacket);
-					continue;
+					message.setStatusDuplicate();
 				}
 				switch (message.getFunction()) {
 					case 1:
@@ -191,11 +190,12 @@ public class ChatServerThread extends Thread {
 	if(userExists(message)){
 		NetworkMessage response = new NetworkMessage(2, message.getUser(), "Failed", "User " +message.getUser() + " already exists");
 		return response;
-	}else{
-		writeToFile(message.getUser() + "#" + message.getMessage() + "#", "res/Users.txt");
-    		User user = new User(message.getUser(), message.getMessage());
-		users.add(user);
-		//TODO: we need to decide on a number for response messages, I have used -1
+	}else{	
+		if(!message.checkDuplicate()){
+			writeToFile(message.getUser() + "#" + message.getMessage() + "#", "res/Users.txt");
+	    		User user = new User(message.getUser(), message.getMessage());
+			users.add(user);
+		}
 		NetworkMessage response = new NetworkMessage(2, message.getUser(), "Success", "User succsessfully created");
 	      	return response;	
 	}	
@@ -254,8 +254,10 @@ public class ChatServerThread extends Thread {
 				return new NetworkMessage(3,message.getUser(),"Failed: Chat not created. User: "+chatUsers[i]+" not found","");	
 			}
 		}
-		writeToFile(null, "res/Chats/" + String.join(";",chatUsers));		
-		chats.add(newChat);
+		if(!message.checkDuplicate()){
+			writeToFile(null, "res/Chats/" + String.join(";",chatUsers));		
+			chats.add(newChat);
+		}
 		NetworkMessage response = new NetworkMessage(3, message.getUser(), "Success", "Chat " + String.join(";",chatUsers) + " created.");
 		return response;
 	}
@@ -321,11 +323,13 @@ public class ChatServerThread extends Thread {
 			if (c.equals(temp)) {
 				//if(temp.getChatName().equals(c.getChatName())){
 				System.out.println("added");
-				if (!c.containsMessage(m.toString())) {
-					c.addMessage(m.toString());
+				if(!message.checkDuplicate()){
+					if (!c.containsMessage(m.toString())) {
+						c.addMessage(m.toString());
+					}
+					status = "Message Received";
+					writeToFile(parts[0], "res/Chats/" + c.getChatName());
 				}
-				status = "Message Received";
-				writeToFile(parts[0], "res/Chats/" + c.getChatName());
 			}
 		}
 		return new NetworkMessage(12, message.getUser(), status, "Function 12");

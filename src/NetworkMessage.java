@@ -75,4 +75,7 @@ public class NetworkMessage{
 
     public static void setIDCounter(int c){IDcounter = c;}
     public static void setIPPort(String s){IPPort = s;}
+    
+    public void setStatusDuplicate(){status = "Duplicate";}
+    public boolean checkDuplicate(){return status.equals("Duplicate");}
 }
