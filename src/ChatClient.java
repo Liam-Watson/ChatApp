@@ -303,6 +303,15 @@ public class ChatClient extends JFrame implements ActionListener {
                             otherUser = "";
 
                             otherUser = JOptionPane.showInputDialog("Enter the name of the user(s) you want to chat with.\nTo make a group chat, enter the usernames with a semi-colon between them\n(e.g. John;Jane will create a chat with you, John and Jane)");
+                            int index = otherUser.indexOf(username);
+                            while(index>=0){
+                            	if(index+username.length()<otherUser.length()){
+                            		otherUser = otherUser.substring(0,index) + otherUser.substring(index+username.length()+1);
+                            	}else{
+                            		otherUser = otherUser.substring(0,index-1) + otherUser.substring(index+username.length());
+                            	}
+                            	index = otherUser.indexOf(username);
+                            }
                             createChat(username, otherUser, serverAddress);
                             String chatName = username + ";" + otherUser;
                             boolean success = false;
