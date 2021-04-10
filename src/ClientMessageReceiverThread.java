@@ -28,7 +28,7 @@ public class ClientMessageReceiverThread extends Thread{
     public void setSocket(DatagramSocket in){
         socket = in;
     }
-
+    
     public void run(){
     	NetworkRequest networkRequests = new NetworkRequest("Server");
         while(keepRunning.get()){
@@ -66,11 +66,16 @@ public class ClientMessageReceiverThread extends Thread{
         }
 
     }
+    /**
+    *stops the thread from running
+    */
     public void end(){
         keepRunning.set(false);
         socket.close();
     }
-    
+    /**
+    *checks if a network message has already been proccessed
+    */
     private boolean checkDuplicate(NetworkMessage n){
     	if(networkRequest==null){
     		networkRequest = new NetworkRequest("Server");

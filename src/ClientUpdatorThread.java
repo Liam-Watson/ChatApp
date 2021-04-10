@@ -196,7 +196,10 @@ public class ClientUpdatorThread extends Thread{
 
         }
     }
-
+    /**
+    *Helper method to randomly corrupt a message 10% of the time
+    *Used for testing purposes
+    */
     public boolean corrupt() {
         double rand = Math.random() * 10;
         if (rand <= 1) {

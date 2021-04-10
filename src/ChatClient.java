@@ -34,7 +34,11 @@ public class ChatClient extends JFrame implements ActionListener {
 
     static ClientUpdatorThread clUpdator;
     static ClientMessageReceiverThread clReceiver;
-
+    /**
+    *Main method to create and open the login screen GUI
+    *Initilises the Socket and sets the servers adress
+    *Sets the static varables in the Network Message Class 
+    */
     public static void main(String[] args) throws IOException {
         serverAddress = InetAddress.getByName(args[0]);
         socket = new DatagramSocket();
@@ -177,7 +181,9 @@ public class ChatClient extends JFrame implements ActionListener {
         login.setVisible(true);
 
     }
-
+    /**
+    *Creates the ChatClient GUI for creating chat as well as sending and reciveing messages 
+    */
     public ChatClient() {
         super("Chat App");
         setSize(700, 900);
@@ -265,7 +271,9 @@ public class ChatClient extends JFrame implements ActionListener {
             }
         }
     }
-
+    /**
+    *Helper method to generate the chat buttons
+    */
     public static void generateChatButtons() throws InterruptedException {
         //getChatHistory();
 
@@ -353,7 +361,9 @@ public class ChatClient extends JFrame implements ActionListener {
         chatApp.add(chats, BorderLayout.WEST);
         chats.revalidate();
     }
-
+    /**
+    *Displays the messages for the currently selected chosen chat
+    */
     public static void showMessages() {
         String[] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
         Chat currentChat = new Chat(defaultChats);
@@ -364,7 +374,9 @@ public class ChatClient extends JFrame implements ActionListener {
         }
         chatContent.setText(currentChat.printMessages());
     }
-
+    /**
+    *Sends a message to the Server with the text from the text field, and the currently selected chat
+    */
     @Override
     public void actionPerformed(ActionEvent e) {
         String action = e.getActionCommand();
@@ -410,7 +422,9 @@ public class ChatClient extends JFrame implements ActionListener {
             //socket.send(packet);
         }
     }
-
+    /**
+    *Sends a request to the server to create a chat
+    */
     public static void createChat(String currentName, String userNames, InetAddress address) {
         NetworkMessage message = new NetworkMessage(6, currentName, "request", userNames);
         sendData(message.toString());
@@ -418,7 +432,9 @@ public class ChatClient extends JFrame implements ActionListener {
         //DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 4445);
         //socket.send(packet);
     }
-
+    /**
+    *Sends a request to the server for all of the current chats 
+    */
     public static void getChatHistory() throws InterruptedException {
         //send packet to request chats
         NetworkMessage request = new NetworkMessage(5, username, "request", username);
@@ -462,7 +478,9 @@ public class ChatClient extends JFrame implements ActionListener {
         }
 
     }
-
+    /**
+    *Checks if the login was a success or failure and reports it to the user
+    */
     public static boolean getLoginConfirmation() throws InterruptedException {
         //get response from server if the login succeeded.
         //sorry about these default objects, Java just wont let me use a variable that has not been initialised.
@@ -496,7 +514,9 @@ public class ChatClient extends JFrame implements ActionListener {
             return false;
         }
     }
-
+    /**
+    *Confirms that the server created a new chat
+    */
     public static boolean getNewChatConfirmation() throws InterruptedException {
         //get response from server if the chat creation succeeded.
         Thread.sleep(1000);
@@ -531,7 +551,9 @@ public class ChatClient extends JFrame implements ActionListener {
         }
     }
 
-
+    /**
+    *Sends a message to the sever to send to the recipent(s)
+    */
     public void sendMessage(String user, String chat, String message) throws InterruptedException {
         NetworkMessage packet = new NetworkMessage(1, user, "request", message + "\n" + chat);
         System.out.println("Chat  :" + chat);
@@ -586,6 +608,9 @@ public class ChatClient extends JFrame implements ActionListener {
 //        }
 //    }
     //Try to use this method as a pattern to send packets
+    /**
+    *helper method to send data through the socket to the server
+    */
     private static String sendData(String data) {
         try {
             byte[] buf = new byte[256];
@@ -603,7 +628,10 @@ public class ChatClient extends JFrame implements ActionListener {
             return "failed";
         }
     }
-
+    /**
+    *Helper Method to randomly corrupt a message with a 10% chance
+    *Used for error checking
+    */
     public static boolean corrupt() {
         double rand = Math.random() * 10;
         if (rand <= 1) {

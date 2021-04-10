@@ -20,7 +20,9 @@ public class ChatMessage{
         while(scan.hasNext()) readBy.add(scan.next());
         scan.close();
     }
-
+    /**
+    *Constructor that takes in a string and uses a Scanner to split the mesage into is seperate parts to create a new ChatMessage
+    */
     public ChatMessage(String a) {
         Scanner scLine = new Scanner(a).useDelimiter(delimiter);
         ID = Integer.parseInt(scLine.next());
@@ -36,12 +38,16 @@ public class ChatMessage{
 
         scLine.close();
     }
-    
+    /**
+    *compares if another object is the same as the current message
+    */
     public boolean equals(Object o){
 	    ChatMessage other = (ChatMessage)o;
 	    return (ID + user + dateTime + content).equals(other.getID() + other.getUser() + other.getDateTime() + content);
     }
-    
+    /**
+    *returns a formated string of the message object
+    */
     public String toString(){
         String out = "";
         out += ID+delimiter+user+delimiter+dateTime+delimiter+content+delimiter;
@@ -50,12 +56,16 @@ public class ChatMessage{
 	}
 	return out;
     }
-    
+    /**
+    * marks a user as having read a message
+    */
     public void read(String u){
         if(!(u.equals(user)||readBy.contains(u)))
             readBy.add(u);
     }
-    
+    /**
+    *checks is a user has read a particular message
+    */
     public boolean readByUser(String u){
         return readBy.contains(u);
     }
@@ -67,7 +77,9 @@ public class ChatMessage{
     public String getContent(){return content;}
     public ArrayList<String> getReadBy(){return readBy;}
     public String getDelimiter(){return delimiter;}
-    
+    /**
+    *edits the details of a message
+    */
     public void editMessage(String dt, String c){
         dateTime = dt;
         content = c;

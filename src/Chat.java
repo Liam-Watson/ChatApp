@@ -18,15 +18,23 @@ public class Chat{
 		messages.add(new ChatMessage(lines[i]));
 	}
     }
+    /**
+    *takes in a string of a whole chat and adds the messages to the arraylist
+    */
     public void initChat(Scanner scan){
         while(scan.hasNext()){
             messages.add(new ChatMessage(scan.nextLine()));
         }
     }
-    
+    /**
+    *adds a single message to the array
+    */
     public void addMessage(String line){
         messages.add(new ChatMessage(line));
     }
+    /**
+    *checks if a message is contained in the chat object
+    */
     public boolean containsMessage(String line){
         for (ChatMessage m : messages) {
             if (m.equals(new ChatMessage(line))) {
@@ -35,6 +43,9 @@ public class Chat{
         }
         return false;
     }
+    /**
+    *returns all of the messages as a formatted string
+    */
     public String printMessages(){
         String outMessages = "";
 
@@ -44,12 +55,18 @@ public class Chat{
 
         return outMessages;
     }
+    /**
+    *returns the last message in the chat
+    */
     public ChatMessage getMostRecentMessage(){
 	if(messages.size() == 0){
 		return null; //TODO: Decide on a way to deal with no messages
 	}
         return messages.get(messages.size()-1);
     }
+    /**
+    *takes in an obeject and sees if it is the same as the chat object it is compared to
+    */
     public boolean equals(Object other){
 		Chat otherChat = (Chat)other;
 		if(otherChat != null && otherChat instanceof Chat){
@@ -62,6 +79,9 @@ public class Chat{
 			return false;
 		}
     }
+    /**
+    *returns a formatted string of the chat object
+    */
     public String toString(){
         String out = ""; //TODO: Multiple users > 2 
         out += String.join(";", users);
@@ -76,7 +96,10 @@ public class Chat{
     public String[] getUsers(){
 	return users;
     }
-
+    
+    /**
+    *returns all chat messages in a string, after the given message
+    */
     public String getMessagesSince(ChatMessage message){
 	String msgs = this.getChatName() + "\n";
 	    if(messages.contains(message)){
@@ -92,7 +115,9 @@ public class Chat{
 	}
 	return msgs;
     }
-    
+    /**
+    *checks if a user is part of the chat
+    */
     public boolean userPartOfChat(String userName){
         for(int i=0;i<users.length;i++){
             if(userName.equals(users[i])){

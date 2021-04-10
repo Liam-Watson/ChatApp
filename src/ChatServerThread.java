@@ -31,7 +31,9 @@ public class ChatServerThread extends Thread {
         initChats();
         networkRequests = new ArrayList<NetworkRequest>();
     }
-
+    /**
+    *helper method to intitlise the user arraylist from a text file
+    */
     private void initUsers(){
         users = new ArrayList<User>();
         try{
@@ -52,7 +54,9 @@ public class ChatServerThread extends Thread {
             scFile.close();    
         }catch (IOException e){System.out.println(e);}
     }
-    
+    /**
+    *helper method to intitlise the chats arraylist from a text file
+    */
     private void initChats(){
         chats = new ArrayList<Chat>();
         File folder = new File("res/Chats");
@@ -131,7 +135,9 @@ public class ChatServerThread extends Thread {
 		}
         //socket.close();
     }
-    
+    /**
+    *checks if a network message has been proccessed before and is therefore a duplicate
+    */
     private boolean checkDuplicate(NetworkMessage n){
     	NetworkRequest nr = new NetworkRequest(n.getIPPort());
     	if(!networkRequests.contains(nr)){
@@ -145,7 +151,11 @@ public class ChatServerThread extends Thread {
     	}
     	return !nr.makeRequest(n.getCounter());
     }
-
+    /**
+    *Creates a datagramPacket to recieve any network messages from the socket
+    *Prints out the networkMessage that was received
+    *returns the packet recieved or prints the error encounted
+    */
     private DatagramPacket receiveData() {
         try {
             byte[] buf = new byte[256];
@@ -163,7 +173,11 @@ public class ChatServerThread extends Thread {
             return null;
         }
 	}
-
+    /**
+    *takes in a string to send and the reciever
+    *takes the clients address and port and creates a datagram to send the string to the client
+    *sends the datagram packet through the socket
+    */
     private String sendData(String data, DatagramPacket clientPacket) {
         try {
             byte[] buf = new byte[256];
@@ -200,6 +214,9 @@ public class ChatServerThread extends Thread {
 	      	return response;	
 	}	
     }
+    /**
+    *checks if a user already exits in the user arraylist
+    */
     private boolean userExists(NetworkMessage message){
     	User user = new User(message.getUser(), message.getMessage());
 	if(users.contains(user)){
@@ -208,7 +225,9 @@ public class ChatServerThread extends Thread {
 	        return false;
 	}
     }
-
+    /**
+    *helper method to write a string to a specifed file
+    */
     private void writeToFile(String data, String fileName){
 	try{
 		FileWriter writer = new FileWriter(fileName, true);
@@ -220,7 +239,10 @@ public class ChatServerThread extends Thread {
 		e.printStackTrace();
 	}
     }
-
+    /**
+    *takes username from network message and passwrod from the netowrkmessage message 
+    *checks if a user has entered a correct username and password combination
+    */
     private boolean checkUserPw(NetworkMessage message){
     	User user = new User(message.getUser(), message.getMessage());
 	return users.get(users.indexOf(user)).authenticate(message.getUser(), message.getMessage());		
@@ -241,6 +263,13 @@ public class ChatServerThread extends Thread {
 		
 
     }
+    /**
+    *This method is to be run when a user tries to create a new chat
+    *the users to be added to the chat are checked to see if a user tried to include themself twice. If so they are removed
+    *All users to be added are checked to be valid. If not an error message is returned
+    *Checks if the chat already exists. If so, an error message is returned
+    *If there are no errors, a new chat is created
+    */
     private NetworkMessage createChat(NetworkMessage message){//Provide a string of all other users seperated by ";" including sender
 	String[] chatUsersUnsafe = (message.getUser()+";"+message.getMessage()).split(";");
 	String[] chatUsers;
@@ -270,9 +299,6 @@ public class ChatServerThread extends Thread {
 		return response;
 	}else{
 		for(int i=0;i<chatUsers.length;i++){
-			if(chatUsers[i].equals(new User(message.getUser(),""))){
-				return new NetworkMessage(3,message.getUser(),"Failed: Chat not created. User: "+chatUsers[i]+" not found","");	
-			}
 			if(!users.contains(new User(chatUsers[i],""))){
 				return new NetworkMessage(3,message.getUser(),"Failed: Chat not created. User: "+chatUsers[i]+" not found","");	
 			}
@@ -306,6 +332,9 @@ public class ChatServerThread extends Thread {
 	}
    	 
     }
+    /**
+    *This method is called to get new chats that a user does not have 
+    */
     private NetworkMessage getNewChats(NetworkMessage message){
     	String[] messageData = message.getMessage().split("\n");
     	String username = messageData[0];
@@ -334,7 +363,12 @@ public class ChatServerThread extends Thread {
 			return new NetworkMessage(5, message.getUser(), "NewChats", newChats);
 		}
 	}
-
+	/**
+        *This message is called to recieve a message from the client
+        *It checks if the message has a valid chat to be added to
+        *Then it is checked to see if the message is already in the chat
+        *It then adds the message to the chat and writes it to the file
+        */
 	private NetworkMessage recieveMessage(NetworkMessage message) {
 		String[] parts = message.getMessage().split("\n"); //TODO: Choose delimiter
 		String status = "Could not find chat";
@@ -372,6 +406,9 @@ public class ChatServerThread extends Thread {
  *       function = f;
  *   }
  */
+    /**
+    *This mesthod is called to send a new message to the client
+    */
     public NetworkMessage sendMessage(NetworkMessage message){
 		//Note Here we are using an & to delimit chat name and chat message. The same is used client side.
 		//There is also a problem where there have been no message changes and for the Networkmessage contructor we need a character to send. I have used ^
