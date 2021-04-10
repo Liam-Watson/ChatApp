@@ -275,25 +275,27 @@ public class ChatServerThread extends Thread {
 	}
    	 
     }
-    
-    private NetworkMessage recieveMessage(NetworkMessage message){
-    	String[] parts = message.getMessage().split("\n"); //TODO: Choose delimiter
-    	String status = "Could not find chat";
-    	//Message format: chatMessage.toString() / Recipents(seperated by ";")
-    	ChatMessage m = new ChatMessage(parts[0]);
-	Chat temp = new Chat(parts[1].split(";"));
-	//System.out.println(">>>>>>>>>>>>>>" +temp.toString());
-    	for(Chat c : chats){
-		if(c.equals(temp)){
-    		//if(temp.getChatName().equals(c.getChatName())){
-    			System.out.println("added");
-    			c.addMessage(m.toString());
-    			status = "Message Received";
-			writeToFile(parts[0], "res/Chats/" + c.getChatName());
-    		}
-    	}
-    	return new NetworkMessage(12, message.getUser(), status ,"Function 12"); 
-    }
+
+	private NetworkMessage recieveMessage(NetworkMessage message) {
+		String[] parts = message.getMessage().split("\n"); //TODO: Choose delimiter
+		String status = "Could not find chat";
+		//Message format: chatMessage.toString() / Recipents(seperated by ";")
+		ChatMessage m = new ChatMessage(parts[0]);
+		Chat temp = new Chat(parts[1].split(";"));
+		//System.out.println(">>>>>>>>>>>>>>" +temp.toString());
+		for (Chat c : chats) {
+			if (c.equals(temp)) {
+				//if(temp.getChatName().equals(c.getChatName())){
+				System.out.println("added");
+				if (!c.containsMessage(m.toString())) {
+					c.addMessage(m.toString());
+				}
+				status = "Message Received";
+				writeToFile(parts[0], "res/Chats/" + c.getChatName());
+			}
+		}
+		return new NetworkMessage(12, message.getUser(), status, "Function 12");
+	}
     
     public void end(){
     	exit = true;
