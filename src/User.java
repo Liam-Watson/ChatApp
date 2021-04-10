@@ -32,7 +32,7 @@ public class User {
     }
     public boolean equals(Object usr){
 	User user = (User)usr;
-    	System.out.println(this.username +" "+ user.username +" "+ this.password +" " + user.password + " " + (this.username.equals(user.username) && this.password.equals(user.password)));	
+    	//System.out.println(this.username +" "+ user.username +" "+ this.password +" " + user.password + " " + (this.username.equals(user.username) && this.password.equals(user.password)));	
 	if(user != null && user instanceof User && this.username.equals(user.username)){
 	       	return true; 
 	}else{
