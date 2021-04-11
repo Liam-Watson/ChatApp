@@ -202,6 +202,13 @@ public class ChatClient extends JFrame implements ActionListener {
         chatContent.setSize(40, 50);
         chatContent.setBorder(new EmptyBorder(30, 30, 30, 30));
         chatContent.setEditable(false);
+        chatContent.setText("Welcome to Chat App - Our submission for CSC3002F Assignment 1\nBy\n"+
+                " - Liam Watson : WTSLIA001\n"+
+                " - Richard Patterson : PTRRIC011\n"+
+                " - Luc van den Handel : VHNLUC001\n\n\n\n\n\n\n\n" +
+                "<-----Open a chat to start messaging or use the \"+\" button to create a new chat\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" +
+                "Once a chat is open, type a message and hit send.\n" +
+                "\t |\n\t |\n\t |\n\t |\n\t |\n\tV\n");
 
         chat.add(scrollPane, BorderLayout.CENTER);
 
