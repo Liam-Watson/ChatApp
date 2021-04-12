@@ -110,33 +110,38 @@ public class ChatClient extends JFrame implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 LoginOrSignUp = "login";
-                try {
-                    joinServer(usrNmeIn.getText(), String.valueOf(passWdIn.getPassword()), "login", InetAddress.getByName(args[0]));
-                } catch (UnknownHostException unknownHostException) {
-                    unknownHostException.printStackTrace();
-                }
-                boolean success = false;
-                try {
-                    success = getLoginConfirmation();
-                } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
-                }
-                if (success) {
-                    NetworkMessage.setIDCounter(0);
-                    username = usrNmeIn.getText();
-                    clUpdator.setUsername(username);
-                    login.setVisible(false);
-                    chatApp = new ChatClient();
-                    clUpdator.setNewChatVars(chats, chatApp);
+                if(!usrNmeIn.getText().equals("") && usrNmeIn.getText() != null && !String.valueOf(passWdIn.getPassword()).equals("") && String.valueOf(passWdIn.getPassword()) != null) {
                     try {
-                        getChatHistory();
-                        generateChatButtons();
+                        joinServer(usrNmeIn.getText(), String.valueOf(passWdIn.getPassword()), "login", InetAddress.getByName(args[0]));
+                    } catch (UnknownHostException unknownHostException) {
+                        unknownHostException.printStackTrace();
+                    }
+                    boolean success = false;
+                    try {
+                        success = getLoginConfirmation();
                     } catch (InterruptedException interruptedException) {
                         interruptedException.printStackTrace();
                     }
-                    chatApp.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Login has failed please try again");
+                    if (success) {
+                        NetworkMessage.setIDCounter(0);
+                        username = usrNmeIn.getText();
+                        clUpdator.setUsername(username);
+                        login.setVisible(false);
+                        chatApp = new ChatClient();
+                        clUpdator.setNewChatVars(chats, chatApp);
+                        try {
+                            getChatHistory();
+                            generateChatButtons();
+                        } catch (InterruptedException interruptedException) {
+                            interruptedException.printStackTrace();
+                        }
+                        chatApp.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Login has failed please try again");
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null, "No input for username or password provided");
+
                 }
 
             }
@@ -146,33 +151,38 @@ public class ChatClient extends JFrame implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 LoginOrSignUp = "register";
-                try {
-                    joinServer(usrNmeIn.getText(), String.valueOf(passWdIn.getPassword()), "register", InetAddress.getByName(args[0]));
-                } catch (UnknownHostException unknownHostException) {
-                    unknownHostException.printStackTrace();
-                }
-                boolean success = false;
-                try {
-                    success = getLoginConfirmation();
-                } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
-                }
-                if (success) {
-                    NetworkMessage.setIDCounter(0);
-                    username = usrNmeIn.getText();
-                    clUpdator.setUsername(username);
-                    login.setVisible(false);
-                    chatApp = new ChatClient();
-                    clUpdator.setNewChatVars(chats, chatApp);
+                if(!usrNmeIn.getText().equals("") && usrNmeIn.getText() != null && !String.valueOf(passWdIn.getPassword()).equals("") && String.valueOf(passWdIn.getPassword()) != null) {
                     try {
-                        getChatHistory();
-                        generateChatButtons();
+                        joinServer(usrNmeIn.getText(), String.valueOf(passWdIn.getPassword()), "register", InetAddress.getByName(args[0]));
+                    } catch (UnknownHostException unknownHostException) {
+                        unknownHostException.printStackTrace();
+                    }
+                    boolean success = false;
+                    try {
+                        success = getLoginConfirmation();
                     } catch (InterruptedException interruptedException) {
                         interruptedException.printStackTrace();
                     }
-                    chatApp.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Signup has failed please try again");
+                    if (success) {
+                        NetworkMessage.setIDCounter(0);
+                        username = usrNmeIn.getText();
+                        clUpdator.setUsername(username);
+                        login.setVisible(false);
+                        chatApp = new ChatClient();
+                        clUpdator.setNewChatVars(chats, chatApp);
+                        try {
+                            getChatHistory();
+                            generateChatButtons();
+                        } catch (InterruptedException interruptedException) {
+                            interruptedException.printStackTrace();
+                        }
+                        chatApp.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Signup has failed please try again");
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null, "No input for username or password provided");
+
                 }
             }
         });
