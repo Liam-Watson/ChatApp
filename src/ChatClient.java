@@ -460,7 +460,7 @@ public class ChatClient extends JFrame implements ActionListener {
                 check.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        if(count[0] < 10) {
+                        if(count[0] < 20 && response.getFunction() != 1) {
                             for (int l = 0; l < incomingMessages.size(); l++) {
                                 if (incomingMessages.get(l).getFunction() == 1) {
                                     response = incomingMessages.get(l);
@@ -517,7 +517,7 @@ public class ChatClient extends JFrame implements ActionListener {
                 check.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        if(count[0] < 10) {
+                        if(count[0] < 20 && response.getFunction() != 2) {
                             for (int l = 0; l < incomingMessages.size(); l++) {
                                 if (incomingMessages.get(l).getFunction() == 2) {
                                     response = incomingMessages.get(l);
@@ -564,7 +564,7 @@ public class ChatClient extends JFrame implements ActionListener {
                 check.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        if(count[0] < 10) {
+                        if(count[0] < 20 && response.getFunction() != 3) {
                             for (int l = 0; l < incomingMessages.size(); l++) {
                                 if (incomingMessages.get(l).getFunction() == 3) {
                                     response = incomingMessages.get(l);
@@ -614,7 +614,7 @@ public class ChatClient extends JFrame implements ActionListener {
                 check.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        if(count[0] < 10) {
+                        if(count[0] < 20 && response.getFunction() != 12) {
                             for (int l = 0; l < incomingMessages.size(); l++) {
                                 if (incomingMessages.get(l).getFunction() == 12) {
                                     response = incomingMessages.get(l);

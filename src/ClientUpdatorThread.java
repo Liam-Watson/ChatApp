@@ -61,7 +61,20 @@ public class ClientUpdatorThread extends Thread{
 
 
     public void run(){
+        //wait before sending update requests.
+        try {
+            sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         while (keepRunning.get()) {
+            //Thread sleeps for 2 seconds, i.e chats will be updated every 2 seconds
+            try {
+                sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //send most recent messages
             for (int i = 0; i < chatsList.size(); i++) {
                 String chatName = chatsList.get(i).getChatName();
                 ChatMessage mostRecentMessage = chatsList.get(i).getMostRecentMessage();
@@ -71,8 +84,7 @@ public class ClientUpdatorThread extends Thread{
                 }else {
                     updateChatRequest = chatName + "\n" + "empty";
                 }
-                //based on the doc I assume that a the sendMessage function (2) is what we will use for this
-                //message body will be chatname <newline> most recent chat message (in String form)
+
                 NetworkMessage request = new NetworkMessage(2, username, "request", updateChatRequest);
 
                 try {
@@ -88,11 +100,10 @@ public class ClientUpdatorThread extends Thread{
 
                 }
 
-                //TODO NOTE Incoming network message must have function value of 0
-                //TODO NOTE The incoming network message object must contain the string <ChatName>\n<ChatMessage.toString()>\n<ChatMessage... i.e chat name and messages with \n as a delimiter
 
 
             }
+            //send all chats
             String currentChats = username + "\n";
             for (int i = 0; i < chatsList.size(); i++) {
                 if(!chatsList.get(i).getChatName().equals("")) {
@@ -187,12 +198,8 @@ public class ClientUpdatorThread extends Thread{
 
 
 
-            //Thread sleeps for 2 seconds, i.e chats will be updated every 2 seconds
-            try {
-                sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
+
 
         }
     }
