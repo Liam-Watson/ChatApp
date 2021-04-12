@@ -109,6 +109,7 @@ public class ChatClient extends JFrame implements ActionListener {
         loginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                removeLoginConfirmations();
                 LoginOrSignUp = "login";
                 if(!usrNmeIn.getText().equals("") && usrNmeIn.getText() != null && !String.valueOf(passWdIn.getPassword()).equals("") && String.valueOf(passWdIn.getPassword()) != null) {
                     try {
@@ -150,6 +151,7 @@ public class ChatClient extends JFrame implements ActionListener {
         signUpBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                removeLoginConfirmations();
                 LoginOrSignUp = "register";
                 if(!usrNmeIn.getText().equals("") && usrNmeIn.getText() != null && !String.valueOf(passWdIn.getPassword()).equals("") && String.valueOf(passWdIn.getPassword()) != null) {
                     try {
@@ -529,6 +531,7 @@ public class ChatClient extends JFrame implements ActionListener {
         } else {
             return false;
         }
+
     }
     /**
     *Confirms that the server created a new chat
@@ -680,6 +683,13 @@ public class ChatClient extends JFrame implements ActionListener {
             }
         }
         return String.join(";",out);
+    }
+    public static void removeLoginConfirmations(){
+        for(int i = 0 ; i < incomingMessages.size(); i++){
+            if (incomingMessages.get(i).getFunction() == 2) {
+                incomingMessages.remove(i);
+            }
+        }
     }
 
     /*
