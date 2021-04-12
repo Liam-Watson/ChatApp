@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.List;
 import java.time.LocalDateTime; // Import the LocalDateTime class
 import java.time.format.DateTimeFormatter; // Import the DateTimeFormatter class
+import java.util.Timer;
 
 public class ChatClient extends JFrame implements ActionListener {
     //declare public and static variables that need to be used in multiple methods and classes
@@ -32,8 +33,10 @@ public class ChatClient extends JFrame implements ActionListener {
     static String LoginOrSignUp;
     static String otherUser;
 
+
     static ClientUpdatorThread clUpdator;
     static ClientMessageReceiverThread clReceiver;
+    static NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
     /**
     *Main method to create and open the login screen GUI
     *Initilises the Socket and sets the servers adress
@@ -447,20 +450,33 @@ public class ChatClient extends JFrame implements ActionListener {
         NetworkMessage request = new NetworkMessage(5, username, "request", username);
         sendData(request.toString());
         chatsList.clear();
-        Thread.sleep(1000);
-        NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
+        Thread.sleep(400);
+        response = new NetworkMessage(-1, "failed", "failed", "failed");
         while (response.getFunction() != 1) {
             if (incomingMessages.size() > 0) {
-                for (int l = 0; l < incomingMessages.size(); l++) {
-                    if (incomingMessages.get(l).getFunction() == 1) {
-                        response = incomingMessages.get(l);
-                        incomingMessages.remove(l);
-                        break;
+                //check for incoming message until timeout
+                Timer check = new Timer();
+                final int[] count = {0};
+                check.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if(count[0] < 10) {
+                            for (int l = 0; l < incomingMessages.size(); l++) {
+                                if (incomingMessages.get(l).getFunction() == 1) {
+                                    response = incomingMessages.get(l);
+                                    incomingMessages.remove(l);
+                                    break;
+                                }
+                            }
+                            count[0]++;
+                        }else{
+                            check.cancel();
+                        }
                     }
-                }
+                }, 0, 1000);
+
             } else {
                 //resend packet after delay
-                //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
                 Thread.sleep(500);
                 request = new NetworkMessage(5, username, "request", username);
                 sendData(request.toString());
@@ -491,21 +507,33 @@ public class ChatClient extends JFrame implements ActionListener {
     public static boolean getLoginConfirmation() throws InterruptedException {
         //get response from server if the login succeeded.
         //sorry about these default objects, Java just wont let me use a variable that has not been initialised.
-        Thread.sleep(1000);
-        NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
+        Thread.sleep(400);
+        response = new NetworkMessage(-1, "failed", "failed", "failed");
         while (response.getFunction() != 2) {
             if (incomingMessages.size() > 0) {
-
-                for (int i = 0; i < incomingMessages.size(); i++) {
-                    if (incomingMessages.get(i).getFunction() == 2) {
-                        response = incomingMessages.get(i);
-                        incomingMessages.remove(i);
-                        break;
+                //check for incoming message until timeout
+                Timer check = new Timer();
+                final int[] count = {0};
+                check.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if(count[0] < 10) {
+                            for (int l = 0; l < incomingMessages.size(); l++) {
+                                if (incomingMessages.get(l).getFunction() == 2) {
+                                    response = incomingMessages.get(l);
+                                    incomingMessages.remove(l);
+                                    break;
+                                }
+                            }
+                            count[0]++;
+                        }else{
+                            check.cancel();
+                        }
                     }
-                }
+                }, 0, 1000);
+
             } else {
                 //resend packet
-                //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
                 Thread.sleep(500);
                 joinServer(usrNmeIn.getText(), String.valueOf(passWdIn.getPassword()), LoginOrSignUp, serverAddress);
             }
@@ -526,22 +554,33 @@ public class ChatClient extends JFrame implements ActionListener {
     */
     public static boolean getNewChatConfirmation() throws InterruptedException {
         //get response from server if the chat creation succeeded.
-        Thread.sleep(1000);
-        NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
+        Thread.sleep(400);
+        response = new NetworkMessage(-1, "failed", "failed", "failed");
         while (response.getFunction() != 3) {
             if (incomingMessages.size() > 0) {
-
-                for (int i = 0; i < incomingMessages.size(); i++) {
-                    if (incomingMessages.get(i).getFunction() == 3) {
-                        response = incomingMessages.get(i);
-
-                        incomingMessages.remove(i);
-                        break;
+                //check for incoming message until timeout
+                Timer check = new Timer();
+                final int[] count = {0};
+                check.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if(count[0] < 10) {
+                            for (int l = 0; l < incomingMessages.size(); l++) {
+                                if (incomingMessages.get(l).getFunction() == 3) {
+                                    response = incomingMessages.get(l);
+                                    incomingMessages.remove(l);
+                                    break;
+                                }
+                            }
+                            count[0]++;
+                        }else{
+                            check.cancel();
+                        }
                     }
-                }
+                }, 0, 1000);
+
             } else {
                 //resend packet
-                //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
                 Thread.sleep(500);
                 createChat(username, otherUser, serverAddress);
             }
@@ -565,21 +604,33 @@ public class ChatClient extends JFrame implements ActionListener {
         NetworkMessage packet = new NetworkMessage(1, user, "request", message + "\n" + chat);
         System.out.println("Chat  :" + chat);
         sendData(packet.toString());
-        Thread.sleep(1000);
-        NetworkMessage response = new NetworkMessage(-1, "failed", "failed", "failed");
+        Thread.sleep(400);
+        response = new NetworkMessage(-1, "failed", "failed", "failed");
         while (response.getFunction() != 12) {
             if (incomingMessages.size() > 0) {
-
-                for (int i = 0; i < incomingMessages.size(); i++) {
-                    if (incomingMessages.get(i).getFunction() == 12) {
-                        response = incomingMessages.get(i);
-                        incomingMessages.remove(i);
-                        break;
+                //check for incoming message until timeout
+                Timer check = new Timer();
+                final int[] count = {0};
+                check.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if(count[0] < 10) {
+                            for (int l = 0; l < incomingMessages.size(); l++) {
+                                if (incomingMessages.get(l).getFunction() == 12) {
+                                    response = incomingMessages.get(l);
+                                    incomingMessages.remove(l);
+                                    break;
+                                }
+                            }
+                            count[0]++;
+                        }else{
+                            check.cancel();
+                        }
                     }
-                }
+                }, 0, 1000);
+
             } else {
                 //resend packet
-                //TODO if the the response has been lost and not request packet then the server needs to handle the dubplicate message, otherwise a signup will erroneously fail
                 Thread.sleep(500);
                 packet = new NetworkMessage(1, user, "request", message + "\n" + chat);
                 sendData(packet.toString());
