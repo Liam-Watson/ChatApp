@@ -247,7 +247,7 @@ public class ChatClient extends JFrame implements ActionListener {
                             }
                         }
                         String oldMessages = chatContent.getText();
-                        chatContent.setText(oldMessages + username + ": " + dateTime.format(dateTimeFormat) + "\n" + chatMessage + "✓\n");
+                        chatContent.setText(oldMessages + username + ": " + dateTime.format(dateTimeFormat) + "\n" + chatMessage + " - sending...\n");
 
 
                     }
@@ -326,38 +326,33 @@ public class ChatClient extends JFrame implements ActionListener {
                             otherUser = "";
 
                             otherUser = JOptionPane.showInputDialog("Enter the name of the user(s) you want to chat with.\nTo make a group chat, enter the usernames with a semi-colon between them\n(e.g. John;Jane will create a chat with you, John and Jane)");
-                            int index = otherUser.indexOf(username);
-                            while(index>=0){
-                            	if(index+username.length()<otherUser.length()){
-                            		otherUser = otherUser.substring(0,index) + otherUser.substring(index+username.length()+1);
-                            	}else{
-                            		otherUser = otherUser.substring(0,index-1) + otherUser.substring(index+username.length());
-                            	}
-                            	index = otherUser.indexOf(username);
-                            }
-                            createChat(username, otherUser, serverAddress);
-                            String chatName = username + ";" + otherUser;
-                            boolean success = false;
-                            try {
-                                success = getNewChatConfirmation();
-                            } catch (InterruptedException interruptedException) {
-                                interruptedException.printStackTrace();
-                            }
-                            if (success) {
-                                try {
-                                    String[] newUsers = new String[2];
-                                    newUsers[0] = username;
-                                    newUsers[1] = otherUser;
-                                    Chat newChat = new Chat(newUsers);
-                                    chatsList.add(newChat);
-                                    chatApp.remove(chats);
+                            otherUser = checkUsersValid(otherUser, username);
+                            if(otherUser != null || otherUser.equals("")) {
 
-                                    generateChatButtons();
+                                createChat(username, otherUser, serverAddress);
+                                String chatName = username + ";" + otherUser;
+                                boolean success = false;
+                                try {
+                                    success = getNewChatConfirmation();
                                 } catch (InterruptedException interruptedException) {
                                     interruptedException.printStackTrace();
                                 }
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Chat creation has failed, other user not found");
+                                if (success) {
+                                    try {
+                                        String[] newUsers = new String[2];
+                                        newUsers[0] = username;
+                                        newUsers[1] = otherUser;
+                                        Chat newChat = new Chat(newUsers);
+                                        chatsList.add(newChat);
+                                        chatApp.remove(chats);
+
+                                        generateChatButtons();
+                                    } catch (InterruptedException interruptedException) {
+                                        interruptedException.printStackTrace();
+                                    }
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "Chat creation has failed, other user not found");
+                                }
                             }
                             otherUser = "";
                             break;
@@ -665,6 +660,16 @@ public class ChatClient extends JFrame implements ActionListener {
             return true;
         }
 
+    }
+    public static String checkUsersValid(String input, String user){
+        String[] users = input.split(";");
+        ArrayList<String> out = new ArrayList<String>();
+        for(int i=0;i<users.length;i++){
+            if(!(out.contains(users[i]) || users[i].equals(user))){
+                out.add(users[i]);
+            }
+        }
+        return String.join(";",out);
     }
 
     /*

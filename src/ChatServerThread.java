@@ -342,7 +342,7 @@ public class ChatServerThread extends Thread {
     	boolean hasChat = false;
     	String currentChat =  "";
     	for(Chat c : chats){
-    		if(c.getChatName().contains(username)){
+    		if(c.userPartOfChat(username)){
     			currentChat = c.getChatName();
     			for(int j = 1; j < messageData.length; j++){
 
