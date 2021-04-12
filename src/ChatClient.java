@@ -438,34 +438,29 @@ public class ChatClient extends JFrame implements ActionListener {
         Thread.sleep(400);
         response = new NetworkMessage(-1, "failed", "failed", "failed");
         while (response.getFunction() != 1) {
-            if (incomingMessages.size() > 0) {
-                //check for incoming message until timeout
-                Timer check = new Timer();
-                final int[] count = {0};
-                check.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if(count[0] < 20 && response.getFunction() != 1) {
-                            for (int l = 0; l < incomingMessages.size(); l++) {
-                                if (incomingMessages.get(l).getFunction() == 1) {
-                                    response = incomingMessages.get(l);
-                                    incomingMessages.remove(l);
-                                    break;
-                                }
-                            }
-                            count[0]++;
-                        }else{
-                            check.cancel();
-                        }
-                    }
-                }, 0, 1000);
 
-            } else {
-                //resend packet after delay
-                Thread.sleep(500);
-                request = new NetworkMessage(5, username, "request", username);
-                sendData(request.toString());
-            }
+            //check for incoming message until timeout
+            Timer check = new Timer();
+            final int[] count = {0};
+            check.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    if (count[0] < 20 && response.getFunction() != 1) {
+                        for (int l = 0; l < incomingMessages.size(); l++) {
+                            if (incomingMessages.get(l).getFunction() == 1) {
+                                response = incomingMessages.get(l);
+                                incomingMessages.remove(l);
+                                break;
+                            }
+                        }
+                        count[0]++;
+                    } else {
+                        check.cancel();
+                    }
+                }
+            }, 0, 1000);
+
+
             if (response.getFunction() != 1) {
                 //resend packet after delay
                 Thread.sleep(500);
@@ -495,33 +490,29 @@ public class ChatClient extends JFrame implements ActionListener {
         Thread.sleep(400);
         response = new NetworkMessage(-1, "failed", "failed", "failed");
         while (response.getFunction() != 2) {
-            if (incomingMessages.size() > 0) {
-                //check for incoming message until timeout
-                Timer check = new Timer();
-                final int[] count = {0};
-                check.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if(count[0] < 20 && response.getFunction() != 2) {
-                            for (int l = 0; l < incomingMessages.size(); l++) {
-                                if (incomingMessages.get(l).getFunction() == 2) {
-                                    response = incomingMessages.get(l);
-                                    incomingMessages.remove(l);
-                                    break;
-                                }
-                            }
-                            count[0]++;
-                        }else{
-                            check.cancel();
-                        }
-                    }
-                }, 0, 1000);
 
-            } else {
-                //resend packet
-                Thread.sleep(500);
-                joinServer(usrNmeIn.getText(), String.valueOf(passWdIn.getPassword()), LoginOrSignUp, serverAddress);
-            }
+            //check for incoming message until timeout
+            Timer check = new Timer();
+            final int[] count = {0};
+            check.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    if (count[0] < 20 && response.getFunction() != 2) {
+                        for (int l = 0; l < incomingMessages.size(); l++) {
+                            if (incomingMessages.get(l).getFunction() == 2) {
+                                response = incomingMessages.get(l);
+                                incomingMessages.remove(l);
+                                break;
+                            }
+                        }
+                        count[0]++;
+                    } else {
+                        check.cancel();
+                    }
+                }
+            }, 0, 1000);
+
+
             if (response.getFunction() != 2) {
                 //resend packet
                 Thread.sleep(500);
@@ -542,33 +533,29 @@ public class ChatClient extends JFrame implements ActionListener {
         Thread.sleep(400);
         response = new NetworkMessage(-1, "failed", "failed", "failed");
         while (response.getFunction() != 3) {
-            if (incomingMessages.size() > 0) {
-                //check for incoming message until timeout
-                Timer check = new Timer();
-                final int[] count = {0};
-                check.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if(count[0] < 20 && response.getFunction() != 3) {
-                            for (int l = 0; l < incomingMessages.size(); l++) {
-                                if (incomingMessages.get(l).getFunction() == 3) {
-                                    response = incomingMessages.get(l);
-                                    incomingMessages.remove(l);
-                                    break;
-                                }
-                            }
-                            count[0]++;
-                        }else{
-                            check.cancel();
-                        }
-                    }
-                }, 0, 1000);
 
-            } else {
-                //resend packet
-                Thread.sleep(500);
-                createChat(username, otherUser, serverAddress);
-            }
+            //check for incoming message until timeout
+            Timer check = new Timer();
+            final int[] count = {0};
+            check.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    if (count[0] < 20 && response.getFunction() != 3) {
+                        for (int l = 0; l < incomingMessages.size(); l++) {
+                            if (incomingMessages.get(l).getFunction() == 3) {
+                                response = incomingMessages.get(l);
+                                incomingMessages.remove(l);
+                                break;
+                            }
+                        }
+                        count[0]++;
+                    } else {
+                        check.cancel();
+                    }
+                }
+            }, 0, 1000);
+
+
             if (response.getFunction() != 3) {
                 //resend packet
                 Thread.sleep(500);
@@ -592,34 +579,29 @@ public class ChatClient extends JFrame implements ActionListener {
         Thread.sleep(400);
         response = new NetworkMessage(-1, "failed", "failed", "failed");
         while (response.getFunction() != 4) {
-            if (incomingMessages.size() > 0) {
-                //check for incoming message until timeout
-                Timer check = new Timer();
-                final int[] count = {0};
-                check.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if(count[0] < 20 && response.getFunction() != 4) {
-                            for (int l = 0; l < incomingMessages.size(); l++) {
-                                if (incomingMessages.get(l).getFunction() == 4) {
-                                    response = incomingMessages.get(l);
-                                    incomingMessages.remove(l);
-                                    break;
-                                }
-                            }
-                            count[0]++;
-                        }else{
-                            check.cancel();
-                        }
-                    }
-                }, 0, 1000);
 
-            } else {
-                //resend packet
-                Thread.sleep(500);
-                packet = new NetworkMessage(1, user, "request", message + "\n" + chat);
-                sendData(packet.toString());
-            }
+            //check for incoming message until timeout
+            Timer check = new Timer();
+            final int[] count = {0};
+            check.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    if (count[0] < 20 && response.getFunction() != 4) {
+                        for (int l = 0; l < incomingMessages.size(); l++) {
+                            if (incomingMessages.get(l).getFunction() == 4) {
+                                response = incomingMessages.get(l);
+                                incomingMessages.remove(l);
+                                break;
+                            }
+                        }
+                        count[0]++;
+                    } else {
+                        check.cancel();
+                    }
+                }
+            }, 0, 1000);
+
+
             if (response.getFunction() != 4) {
                 //resend packet
                 Thread.sleep(500);
