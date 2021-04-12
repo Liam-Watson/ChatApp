@@ -19,7 +19,7 @@ clean:
 	rm $(BINDIR)/*.class
 runServer:
 	java -cp bin ChatServer
-runClient:
+runClientLocal:
 	java -cp bin ChatClient localhost
-
-		
+runClientRemote:
+	java -cp bin ChatClient ec2-13-244-233-216.af-south-1.compute.amazonaws.com
