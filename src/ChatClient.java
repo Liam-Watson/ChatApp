@@ -389,27 +389,7 @@ public class ChatClient extends JFrame implements ActionListener {
     */
     @Override
     public void actionPerformed(ActionEvent e) {
-        String action = e.getActionCommand();
-        switch (action) {
-            case "send":
-                try {
-                    sendMessage(username, openChat[0], message.getText());
-                } catch (InterruptedException f) {
-                    f.printStackTrace();
-                }
-                String[] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
-                Chat currentChat = new Chat(defaultChats);
-                for (int i = 0; i < chatsList.size(); i++) {
-                    if (chatsList.get(i).getChatName().equals(openChat[0])) {
-                        currentChat = chatsList.get(i);
-                        currentChat.addMessage("1#" + username + "#" + message.getText() + "#");
-                    }
-                }
-                chatContent.setText(currentChat.printMessages());
-
-                break;
-
-        }
+        
     }
 
     /*

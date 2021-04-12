@@ -383,9 +383,10 @@ public class ChatServerThread extends Thread {
 				if(!message.checkDuplicate()){
 					if (!c.containsMessage(m.toString())) {
 						c.addMessage(m.toString());
+						writeToFile(parts[0], "res/Chats/" + c.getChatName());
 					}
 					status = "Message Received";
-					writeToFile(parts[0], "res/Chats/" + c.getChatName());
+
 				}
 			}
 		}
