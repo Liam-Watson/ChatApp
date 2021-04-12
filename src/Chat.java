@@ -71,6 +71,7 @@ public class Chat{
 		Chat otherChat = (Chat)other;
 		if(otherChat != null && otherChat instanceof Chat){
 		    Chat temp = (Chat) other;
+		    if(temp.users.length!=users.length)	return false;
 		    for(int i=0;i<users.length;i++) {
                         if(!temp.userPartOfChat(users[i])) return false;
                     }

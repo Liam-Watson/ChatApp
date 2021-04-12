@@ -270,28 +270,9 @@ public class ChatServerThread extends Thread {
     *Checks if the chat already exists. If so, an error message is returned
     *If there are no errors, a new chat is created
     */
-    private NetworkMessage createChat(NetworkMessage message){//Provide a string of all other users seperated by ";" including sender
-	String[] chatUsersUnsafe = (message.getUser()+";"+message.getMessage()).split(";");
-	String[] chatUsers;
-	int includedUser=0;
-	for(int i=1;i<chatUsersUnsafe.length;i++){
-		if(chatUsersUnsafe[i].equals(message.getUser())){
-			includedUser = i;
-		}		
-	}
-	if(includedUser!=0){
-		chatUsers = new String[chatUsersUnsafe.length-1];
-		int found=0;
-		for(int i=0;i<chatUsersUnsafe.length;i++){
-			if(i!=includedUser){
-				chatUsers[i-found] = chatUsersUnsafe[i];
-			}else{
-				found++;
-			}		
-		}
-	}else{
-		chatUsers = chatUsersUnsafe;
-	}
+    private NetworkMessage createChat(NetworkMessage message){//Provide a string of all other users seperated by ";"
+	String[] chatUsers = (message.getUser()+";"+message.getMessage()).split(";");
+	
 	Chat newChat = new Chat(chatUsers); //Now takes in array 
 	if(chats.contains(newChat)){
 		NetworkMessage response = new NetworkMessage(3, message.getUser(), "Failed", "Chat " + String.join(";",chatUsers) + " already exists.");
