@@ -230,21 +230,25 @@ public class ChatClient extends JFrame implements ActionListener {
                     public void actionPerformed(ActionEvent e) {
                         LocalDateTime dateTime = LocalDateTime.now();
                         DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm:ss");
-                        try {
-                            sendMessage(username, openChat[0], "1" + "#" + username + "#" + dateTime.format(dateTimeFormat) + "#" + message.getText() + "#");
-                        } catch (InterruptedException f) {
-                            f.printStackTrace();
-                        }
+                        String chatMessage = message.getText();
+                        message.setText("");
                         String[] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
                         Chat currentChat = new Chat(defaultChats);
                         for (int i = 0; i < chatsList.size(); i++) {
                             if (chatsList.get(i).getChatName().equals(openChat[0])) {
                                 currentChat = chatsList.get(i);
-                                currentChat.addMessage("1" + "#" + username + "#" + dateTime.format(dateTimeFormat) + "#" + message.getText() + "#");
+                                currentChat.addMessage("1" + "#" + username + "#" + dateTime.format(dateTimeFormat) + "#" + chatMessage + "#");
                             }
                         }
-                        chatContent.setText(currentChat.printMessages());
-                        message.setText("");
+                        String oldMessages = chatContent.getText();
+                        chatContent.setText(oldMessages + username + ": " + dateTime.format(dateTimeFormat) + "\n" + chatMessage + "\n");
+
+                        try {
+                            sendMessage(username, openChat[0], "1" + "#" + username + "#" + dateTime.format(dateTimeFormat) + "#" + chatMessage + "#");
+                        } catch (InterruptedException f) {
+                            f.printStackTrace();
+                        }
+
                     }
                 });
         send.setSize(100, 500);
@@ -389,7 +393,7 @@ public class ChatClient extends JFrame implements ActionListener {
     */
     @Override
     public void actionPerformed(ActionEvent e) {
-        
+
     }
 
     /*
