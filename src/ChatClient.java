@@ -590,7 +590,7 @@ public class ChatClient extends JFrame implements ActionListener {
         sendData(packet.toString());
         Thread.sleep(400);
         response = new NetworkMessage(-1, "failed", "failed", "failed");
-        while (response.getFunction() != 12) {
+        while (response.getFunction() != 4) {
             if (incomingMessages.size() > 0) {
                 //check for incoming message until timeout
                 Timer check = new Timer();
@@ -598,9 +598,9 @@ public class ChatClient extends JFrame implements ActionListener {
                 check.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        if(count[0] < 20 && response.getFunction() != 12) {
+                        if(count[0] < 20 && response.getFunction() != 4) {
                             for (int l = 0; l < incomingMessages.size(); l++) {
-                                if (incomingMessages.get(l).getFunction() == 12) {
+                                if (incomingMessages.get(l).getFunction() == 4) {
                                     response = incomingMessages.get(l);
                                     incomingMessages.remove(l);
                                     break;
@@ -619,14 +619,14 @@ public class ChatClient extends JFrame implements ActionListener {
                 packet = new NetworkMessage(1, user, "request", message + "\n" + chat);
                 sendData(packet.toString());
             }
-            if (response.getFunction() != 12) {
+            if (response.getFunction() != 4) {
                 //resend packet
                 Thread.sleep(500);
                 packet = new NetworkMessage(1, user, "request", message + "\n" + chat);
                 sendData(packet.toString());
             }
         }
-        if (response.getFunction() == 12) {
+        if (response.getFunction() == 4) {
             if (response.getStatus().equals("Message Received")) {
                 System.out.println("Message: " + message + " received on chat " + chat);
             } else if (response.getStatus().equals("Message Received")) {

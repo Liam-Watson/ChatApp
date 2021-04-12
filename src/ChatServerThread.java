@@ -390,7 +390,7 @@ public class ChatServerThread extends Thread {
 				}
 			}
 		}
-		return new NetworkMessage(12, message.getUser(), status, "Function 12");
+		return new NetworkMessage(4, message.getUser(), status, "Function 4");
 	}
     
     public void end(){
