@@ -232,6 +232,12 @@ public class ChatClient extends JFrame implements ActionListener {
                         DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yy HH:mm:ss");
                         String chatMessage = message.getText();
                         message.setText("");
+
+                        try {
+                            sendMessage(username, openChat[0], "1" + "#" + username + "#" + dateTime.format(dateTimeFormat) + "#" + chatMessage + "#");
+                        } catch (InterruptedException f) {
+                            f.printStackTrace();
+                        }
                         String[] defaultChats = new String[]{"default1", "default2"}; //TODO: Explain what this is, will this not cause weird behavior?
                         Chat currentChat = new Chat(defaultChats);
                         for (int i = 0; i < chatsList.size(); i++) {
@@ -241,13 +247,8 @@ public class ChatClient extends JFrame implements ActionListener {
                             }
                         }
                         String oldMessages = chatContent.getText();
-                        chatContent.setText(oldMessages + username + ": " + dateTime.format(dateTimeFormat) + "\n" + chatMessage + "\n");
+                        chatContent.setText(oldMessages + username + ": " + dateTime.format(dateTimeFormat) + "\n" + chatMessage + "✓\n");
 
-                        try {
-                            sendMessage(username, openChat[0], "1" + "#" + username + "#" + dateTime.format(dateTimeFormat) + "#" + chatMessage + "#");
-                        } catch (InterruptedException f) {
-                            f.printStackTrace();
-                        }
 
                     }
                 });
